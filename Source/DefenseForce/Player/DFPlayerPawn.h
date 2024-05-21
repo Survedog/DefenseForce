@@ -18,13 +18,26 @@ public:
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	//virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState();
+	
 
+// GAS
 protected:
-	// GAS
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GAS)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TWeakObjectPtr<class UAbilitySystemComponent> ASC;
 
+// Player Control
+protected:
+	UFUNCTION()
+	void OnRep_PlayerAimLocation();
+
+protected:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_PlayerAimLocation, Category = "Player Control")
+	FVector PlayerAimLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Control")
+	float PlayerAimTraceLength;
 };
