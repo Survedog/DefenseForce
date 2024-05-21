@@ -8,8 +8,6 @@
 
 ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentControlledTower(nullptr)
 {
-	PrimaryActorTick.bCanEverTick = false;
-
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
 }

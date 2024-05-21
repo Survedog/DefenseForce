@@ -23,6 +23,8 @@ protected:
 	virtual void OnRep_PlayerState();
 
 protected:
+	// GAS
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GAS)
 	TWeakObjectPtr<class UAbilitySystemComponent> ASC;
+
 };
