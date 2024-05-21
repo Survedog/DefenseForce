@@ -21,7 +21,7 @@ void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 			EndTowerControl();
 		}
 		CurrentControlledTower = NewTower;
-		CurrentControlledTower->BeginControl(this);
+		CurrentControlledTower->BeginControl(DFPlayerPawn);
 	}
 }
 

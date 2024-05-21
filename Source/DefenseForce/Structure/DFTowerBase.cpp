@@ -2,38 +2,47 @@
 
 
 #include "Structure/DFTowerBase.h"
-#include "Player/DFPlayerController.h"
+#include "Player/DFPlayerPawn.h"
 #include "Net/UnrealNetwork.h"
 
-ADFTowerBase::ADFTowerBase() : ControllingPlayer(nullptr)
+ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
 	bIsBeingControlled = false;
 }
 
+bool ADFTowerBase::IsLocallyControlled() const
+{
+	if (ControllingPlayerPawn.IsValid())
+	{
+		return ControllingPlayerPawn->IsLocallyControlled();
+	}
+	return false;
+}
+
 void ADFTowerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//DOREPLIFETIME(ADFTowerBase, ControllingPlayer);
+	DOREPLIFETIME(ADFTowerBase, ControllingPlayerPawn);
 }
 
-void ADFTowerBase::BeginControl_Implementation(ADFPlayerController* NewControllingPlayer)
+void ADFTowerBase::BeginControl_Implementation(ADFPlayerPawn* NewPlayerPawn)
 {
-	SetOwner(NewControllingPlayer);
-	ControllingPlayer = NewControllingPlayer;
+	SetOwner(NewPlayerPawn);
+	ControllingPlayerPawn = NewPlayerPawn;
 	bIsBeingControlled = true;
 }
 
 void ADFTowerBase::EndControl_Implementation()
 {
-	ControllingPlayer = nullptr;
+	ControllingPlayerPawn = nullptr;
 	bIsBeingControlled = false;
 	SetOwner(nullptr);
 }
 
-//void ADFTowerBase::OnRep_ControllingPlayer_Implementation()
-//{
-//	bIsBeingControlled = ControllingPlayer != nullptr ? true : false;
-//}
+void ADFTowerBase::OnRep_ControllingPlayerPawn_Implementation()
+{
+	bIsBeingControlled = ControllingPlayerPawn != nullptr ? true : false;
+}
