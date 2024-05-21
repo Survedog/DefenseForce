@@ -2,10 +2,10 @@
 
 
 #include "Structure/DFTowerBase.h"
-#include "Player/DFPlayerPawn.h"
+#include "Player/DFPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
-ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
+ADFTowerBase::ADFTowerBase() : ControllingPlayer(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -16,22 +16,24 @@ void ADFTowerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ADFTowerBase, ControllingPlayerPawn);
+	//DOREPLIFETIME(ADFTowerBase, ControllingPlayer);
 }
 
-void ADFTowerBase::BeginControl_Implementation(ADFPlayerPawn* NewControllingPlayer)
+void ADFTowerBase::BeginControl_Implementation(ADFPlayerController* NewControllingPlayer)
 {
-	ControllingPlayerPawn = NewControllingPlayer;
+	SetOwner(NewControllingPlayer);
+	ControllingPlayer = NewControllingPlayer;
 	bIsBeingControlled = true;
 }
 
 void ADFTowerBase::EndControl_Implementation()
 {
-	ControllingPlayerPawn = nullptr;
+	ControllingPlayer = nullptr;
 	bIsBeingControlled = false;
+	SetOwner(nullptr);
 }
 
-void ADFTowerBase::OnRep_ControllingPlayerPawn_Implementation()
-{
-	bIsBeingControlled = ControllingPlayerPawn != nullptr ? true : false;
-}
+//void ADFTowerBase::OnRep_ControllingPlayer_Implementation()
+//{
+//	bIsBeingControlled = ControllingPlayer != nullptr ? true : false;
+//}

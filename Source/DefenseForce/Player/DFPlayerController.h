@@ -15,20 +15,34 @@ class DEFENSEFORCE_API ADFPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	ADFPlayerController();
+	ADFPlayerController();	
 
-	UFUNCTION(BlueprintCallable)
-	void StartTowerControl(class ADFTowerBase* NewTower);
+	FORCEINLINE class ADFStructureBase* GetStructureUnderCursor() { return CurrentStructureUnderCursor.Get(); }
 
-	UFUNCTION(BlueprintCallable)
-	void EndTowerControl();
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBeginCursorOverStructureCallback(AActor* TouchedActor);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnEndCursorOverStructureCallback(AActor* TouchedActor);
 
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
 
 protected:
+	friend class GA_TowerControl;
+
+	UFUNCTION(BlueprintCallable)
+	void StartTowerControl(class ADFTowerBase* NewTower);
+
+	UFUNCTION(BlueprintCallable)
+	void EndTowerControl();	
+
+protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Player")
 	TObjectPtr<class ADFPlayerPawn> DFPlayerPawn;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Control")
+	TWeakObjectPtr<class ADFStructureBase> CurrentStructureUnderCursor;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Control")
 	TWeakObjectPtr<class ADFTowerBase> CurrentControlledTower;

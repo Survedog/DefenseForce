@@ -11,7 +11,9 @@ class DEFENSEFORCE_API ADFStructureBase : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
+public:
 	ADFStructureBase();
+
+protected:
+	virtual void BeginPlay() override;	
 };

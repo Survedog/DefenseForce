@@ -23,7 +23,7 @@ void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 			EndTowerControl();
 		}
 		CurrentControlledTower = NewTower;
-		CurrentControlledTower->BeginControl(DFPlayerPawn);
+		CurrentControlledTower->BeginControl(this);
 	}
 }
 
@@ -33,6 +33,19 @@ void ADFPlayerController::EndTowerControl()
 	{
 		CurrentControlledTower->EndControl();
 		CurrentControlledTower = nullptr;
+	}
+}
+
+void ADFPlayerController::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)
+{
+	CurrentStructureUnderCursor = Cast<ADFStructureBase>(TouchedActor);
+}
+
+void ADFPlayerController::OnEndCursorOverStructureCallback_Implementation(AActor* TouchedActor)
+{
+	if (CurrentStructureUnderCursor == TouchedActor)
+	{
+		CurrentStructureUnderCursor = nullptr;
 	}
 }
 

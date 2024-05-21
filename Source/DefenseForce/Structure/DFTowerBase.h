@@ -18,10 +18,10 @@ public:
 	ADFTowerBase();
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool IsBeingControlled() { return bIsBeingControlled; }
+	FORCEINLINE bool IsBeingControlled() const { return bIsBeingControlled; }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void BeginControl(class ADFPlayerPawn* NewControllingPlayer);
+	void BeginControl(class ADFPlayerController* NewControllingPlayer);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void EndControl();
@@ -29,12 +29,12 @@ public:
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRep_ControllingPlayerPawn();
+	//UFUNCTION(BlueprintNativeEvent)
+	//void OnRep_ControllingPlayer();
 
 protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_ControllingPlayerPawn, Category = "Player Control")
-	TWeakObjectPtr<class ADFPlayerPawn> ControllingPlayerPawn;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, /*ReplicatedUsing = OnRep_ControllingPlayer,*/ Category = "Player Control")
+	TWeakObjectPtr<class ADFPlayerController> ControllingPlayer;
 
 private:
 	UPROPERTY(VisibleInstanceOnly)
