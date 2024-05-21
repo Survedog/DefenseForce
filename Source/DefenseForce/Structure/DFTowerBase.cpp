@@ -44,5 +44,5 @@ void ADFTowerBase::EndControl_Implementation()
 
 void ADFTowerBase::OnRep_ControllingPlayerPawn_Implementation()
 {
-	bIsBeingControlled = ControllingPlayerPawn != nullptr ? true : false;
+	bIsBeingControlled = (ControllingPlayerPawn != nullptr) ? true : false;
 }
