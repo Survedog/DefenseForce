@@ -4,6 +4,7 @@
 #include "Player/DFPlayerPawn.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
+#include "Player/DFPlayerController.h"
 #include "AbilitySystemComponent.h"
 #include "DefenseForce.h"
 
@@ -24,6 +25,8 @@ void ADFPlayerPawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 void ADFPlayerPawn::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	DFPlayerController = CastChecked<ADFPlayerController>(NewController);
 
 	IAbilitySystemInterface* PSGASInterface = Cast<IAbilitySystemInterface>(NewController->PlayerState);
 	if (PSGASInterface)
@@ -75,7 +78,6 @@ void ADFPlayerPawn::OnRep_PlayerState()
 	}
 }
 
-
 void ADFPlayerPawn::AbilityInputPressed(EDFAbilityInputID InputID)
 {
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
@@ -105,6 +107,16 @@ void ADFPlayerPawn::AbilityInputReleased(EDFAbilityInputID InputID)
 		{
 			ASC->AbilitySpecInputReleased(*Spec);
 		}
+	}
+}
+
+void ADFPlayerPawn::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	if (Controller)
+	{
+		DFPlayerController = Cast<ADFPlayerController>(Controller);
 	}
 }
 

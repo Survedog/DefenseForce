@@ -22,7 +22,7 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	//virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
-	virtual void OnRep_PlayerState();		
+	virtual void OnRep_PlayerState() override;
 
 // GAS
 protected:
@@ -43,11 +43,19 @@ protected:
 	TArray<TSubclassOf<class UGameplayAbility>> NonInputAbilities;
 
 // Player Control
-protected:
+public:
+	class ADFPlayerController* GetDFPlayerController() const { return DFPlayerController.Get(); }
+
+protected:	
+	virtual void OnRep_Controller() override;
+
 	UFUNCTION()
 	void OnRep_PlayerAimLocation();
 
 protected:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "PlayerControl")
+	TWeakObjectPtr<class ADFPlayerController> DFPlayerController;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_PlayerAimLocation, Category = "Player Control")
 	FVector PlayerAimLocation;
 
