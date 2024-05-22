@@ -28,6 +28,8 @@ void ADFPlayerPawn::PossessedBy(AController* NewController)
 	if (PSGASInterface)
 	{
 		ASC = PSGASInterface->GetAbilitySystemComponent();
+		ensure(ASC.Get());
+		ASC->InitAbilityActorInfo(NewController->PlayerState, this);
 	}
 }
 
@@ -39,6 +41,8 @@ void ADFPlayerPawn::OnRep_PlayerState()
 	if (PSGASInterface)
 	{
 		ASC = PSGASInterface->GetAbilitySystemComponent();
+		ensure(ASC.Get());
+		ASC->InitAbilityActorInfo(GetPlayerState(), this);
 	}
 }
 
