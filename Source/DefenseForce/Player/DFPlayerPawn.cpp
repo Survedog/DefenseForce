@@ -63,20 +63,6 @@ void ADFPlayerPawn::OnRep_PlayerState()
 		ASC = PSGASInterface->GetAbilitySystemComponent();
 		ensure(ASC.Get());
 		ASC->InitAbilityActorInfo(GetPlayerState(), this);
-		
-		// Give Abilities
-		for (auto NonInputAbility : NonInputAbilities)
-		{
-			FGameplayAbilitySpec AbilitySpec(NonInputAbility);
-			ASC->GiveAbility(AbilitySpec);
-		}
-
-		for (auto InputAbilityPair : InputAbilityMap)
-		{
-			FGameplayAbilitySpec AbilitySpec(InputAbilityPair.Value);
-			AbilitySpec.InputID = static_cast<int32>(InputAbilityPair.Key);
-			ASC->GiveAbility(AbilitySpec);
-		}
 	}
 }
 
