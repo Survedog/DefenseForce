@@ -5,6 +5,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemComponent.h"
+#include "DefenseForce.h"
 
 ADFPlayerPawn::ADFPlayerPawn() : PlayerAimLocation(FVector::Zero())
 {
@@ -30,6 +31,20 @@ void ADFPlayerPawn::PossessedBy(AController* NewController)
 		ASC = PSGASInterface->GetAbilitySystemComponent();
 		ensure(ASC.Get());
 		ASC->InitAbilityActorInfo(NewController->PlayerState, this);
+
+		// Give Abilities
+		for (auto NonInputAbility : NonInputAbilities)
+		{
+			FGameplayAbilitySpec AbilitySpec(NonInputAbility);
+			ASC->GiveAbility(AbilitySpec);
+		}
+
+		for (auto InputAbilityPair : InputAbilityMap)
+		{
+			FGameplayAbilitySpec AbilitySpec(InputAbilityPair.Value);
+			AbilitySpec.InputID = static_cast<int32>(InputAbilityPair.Key);
+			ASC->GiveAbility(AbilitySpec);
+		}
 	}
 }
 
@@ -43,6 +58,53 @@ void ADFPlayerPawn::OnRep_PlayerState()
 		ASC = PSGASInterface->GetAbilitySystemComponent();
 		ensure(ASC.Get());
 		ASC->InitAbilityActorInfo(GetPlayerState(), this);
+		
+		// Give Abilities
+		for (auto NonInputAbility : NonInputAbilities)
+		{
+			FGameplayAbilitySpec AbilitySpec(NonInputAbility);
+			ASC->GiveAbility(AbilitySpec);
+		}
+
+		for (auto InputAbilityPair : InputAbilityMap)
+		{
+			FGameplayAbilitySpec AbilitySpec(InputAbilityPair.Value);
+			AbilitySpec.InputID = static_cast<int32>(InputAbilityPair.Key);
+			ASC->GiveAbility(AbilitySpec);
+		}
+	}
+}
+
+
+void ADFPlayerPawn::AbilityInputPressed(EDFAbilityInputID InputID)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
+	if (Spec)
+	{
+		Spec->InputPressed = true;
+
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
+		else
+		{
+			ASC->TryActivateAbility(Spec->Handle, true);
+		}
+	}
+}
+
+void ADFPlayerPawn::AbilityInputReleased(EDFAbilityInputID InputID)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
+	if (Spec)
+	{
+		Spec->InputPressed = false;
+
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputReleased(*Spec);
+		}
 	}
 }
 
