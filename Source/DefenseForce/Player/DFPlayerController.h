@@ -27,6 +27,7 @@ public:
 
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
+	virtual void AcknowledgePossession(class APawn* P) override;
 
 protected:
 	friend class GA_TowerControl;

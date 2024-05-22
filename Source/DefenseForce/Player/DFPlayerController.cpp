@@ -21,7 +21,7 @@ void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 			EndTowerControl();
 		}
 		CurrentControlledTower = NewTower;
-		CurrentControlledTower->BeginControl(DFPlayerPawn);
+		CurrentControlledTower->OnControlStart(DFPlayerPawn);
 	}
 }
 
@@ -29,7 +29,7 @@ void ADFPlayerController::EndTowerControl()
 {
 	if (CurrentControlledTower.IsValid() && CurrentControlledTower->IsBeingControlled())
 	{
-		CurrentControlledTower->EndControl();
+		CurrentControlledTower->OnControlEnd();
 		CurrentControlledTower = nullptr;
 	}
 }
@@ -52,4 +52,11 @@ void ADFPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	DFPlayerPawn = CastChecked<ADFPlayerPawn>(aPawn);
+}
+
+void ADFPlayerController::AcknowledgePossession(APawn* P)
+{
+	Super::AcknowledgePossession(P);
+
+	DFPlayerPawn = CastChecked<ADFPlayerPawn>(P);
 }

@@ -28,21 +28,32 @@ void ADFTowerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ADFTowerBase, ControllingPlayerPawn);
 }
 
-void ADFTowerBase::BeginControl_Implementation(ADFPlayerPawn* NewPlayerPawn)
+void ADFTowerBase::OnControlStart_Implementation(ADFPlayerPawn* NewPlayerPawn)
 {
+	ensure(NewPlayerPawn);
 	SetOwner(NewPlayerPawn);
-	ControllingPlayerPawn = NewPlayerPawn;
 	bIsBeingControlled = true;
+	ControllingPlayerPawn = NewPlayerPawn;
 }
 
-void ADFTowerBase::EndControl_Implementation()
+void ADFTowerBase::OnControlEnd_Implementation()
 {
-	ControllingPlayerPawn = nullptr;
 	bIsBeingControlled = false;
+	ControllingPlayerPawn = nullptr;
 	SetOwner(nullptr);
 }
 
 void ADFTowerBase::OnRep_ControllingPlayerPawn_Implementation()
-{
-	bIsBeingControlled = (ControllingPlayerPawn != nullptr) ? true : false;
+{	
+	if (ControllingPlayerPawn.IsValid())
+	{
+		OnControlStart(ControllingPlayerPawn.Get());
+	}
+	else
+	{
+		if (bIsBeingControlled)
+		{
+			OnControlEnd();
+		}
+	}
 }
