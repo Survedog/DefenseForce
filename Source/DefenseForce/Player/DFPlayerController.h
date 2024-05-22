@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "DFPlayerController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlStartDelegate, ADFTowerBase*, NewControlledTower);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlEndDelegate, ADFTowerBase*, OldControlledTower);
+
 /**
  * 
  */
@@ -28,6 +31,7 @@ public:
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void AcknowledgePossession(class APawn* P) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	friend class GA_TowerControl;
@@ -36,7 +40,17 @@ protected:
 	void StartTowerControl(class ADFTowerBase* NewTower);
 
 	UFUNCTION(BlueprintCallable)
-	void EndTowerControl();	
+	void EndTowerControl();
+
+	UFUNCTION()
+	void OnRep_CurrentControlledTower();
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnTowerControlStartDelegate OnTowerControlStart;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTowerControlEndDelegate OnTowerControlEnd;
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Player")
@@ -45,6 +59,6 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Control")
 	TWeakObjectPtr<class ADFStructureBase> CurrentStructureUnderCursor;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Control")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentControlledTower, Category = "Control")
 	TWeakObjectPtr<class ADFTowerBase> CurrentControlledTower;
 };

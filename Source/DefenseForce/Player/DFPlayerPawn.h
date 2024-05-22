@@ -52,6 +52,12 @@ protected:
 	UFUNCTION()
 	void OnRep_PlayerAimLocation();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTowerControlStartCallback(class ADFTowerBase* NewControlledTower);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTowerControlEndCallback(class ADFTowerBase* OldControlledTower);
+
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "PlayerControl")
 	TWeakObjectPtr<class ADFPlayerController> DFPlayerController;

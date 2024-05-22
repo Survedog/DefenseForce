@@ -80,5 +80,5 @@ void ADFPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION(ADFPlayerController, CurrentControlledTower, COND_AutonomousOnly);
+	DOREPLIFETIME_CONDITION(ADFPlayerController, CurrentControlledTower, COND_SimulatedOnly);
 }
