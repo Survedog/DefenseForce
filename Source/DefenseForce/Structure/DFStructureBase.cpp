@@ -3,6 +3,7 @@
 
 #include "Structure/DFStructureBase.h"
 #include "Player/DFPlayerController.h"
+#include "DFLog.h"
 
 ADFStructureBase::ADFStructureBase()
 {
@@ -14,6 +15,7 @@ void ADFStructureBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DF_LOG(LogDF, Log, TEXT("Start"));
 	ADFPlayerController* LocalDFPlayer = Cast<ADFPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	if (LocalDFPlayer)
 	{

@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Structure/DFTowerBase.h"
 #include "Net/UnrealNetwork.h"
+#include "DFLog.h"
 
 ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentControlledTower(nullptr)
 {
@@ -15,6 +16,7 @@ ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentContr
 
 void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 {
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (!NewTower->IsBeingControlled())
 	{
 		if (CurrentControlledTower.IsValid())
@@ -29,6 +31,7 @@ void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 
 void ADFPlayerController::EndTowerControl()
 {
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (CurrentControlledTower.IsValid() && CurrentControlledTower->IsBeingControlled())
 	{
 		CurrentControlledTower->OnControlEnd();
@@ -39,6 +42,7 @@ void ADFPlayerController::EndTowerControl()
 
 void ADFPlayerController::OnRep_CurrentControlledTower()
 {
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	if (CurrentControlledTower.IsValid())
 	{
 		OnTowerControlStart.Broadcast(CurrentControlledTower.Get());
@@ -51,11 +55,13 @@ void ADFPlayerController::OnRep_CurrentControlledTower()
 
 void ADFPlayerController::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)
 {
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	CurrentStructureUnderCursor = Cast<ADFStructureBase>(TouchedActor);
 }
 
 void ADFPlayerController::OnEndCursorOverStructureCallback_Implementation(AActor* TouchedActor)
 {
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (CurrentStructureUnderCursor == TouchedActor)
 	{
 		CurrentStructureUnderCursor = nullptr;
@@ -66,6 +72,7 @@ void ADFPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	DFPlayerPawn = CastChecked<ADFPlayerPawn>(aPawn);
 }
 
@@ -73,6 +80,7 @@ void ADFPlayerController::AcknowledgePossession(APawn* P)
 {
 	Super::AcknowledgePossession(P);
 
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	DFPlayerPawn = CastChecked<ADFPlayerPawn>(P);
 }
 

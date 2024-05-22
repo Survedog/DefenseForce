@@ -4,6 +4,7 @@
 #include "Structure/DFTowerBase.h"
 #include "Player/DFPlayerPawn.h"
 #include "Net/UnrealNetwork.h"
+#include "DFLog.h"
 
 ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
 {
@@ -30,6 +31,7 @@ void ADFTowerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 void ADFTowerBase::OnControlStart_Implementation(ADFPlayerPawn* NewPlayerPawn)
 {
+	DF_LOG(LogDF, Log, TEXT("Start"));
 	ensure(NewPlayerPawn);
 	SetOwner(NewPlayerPawn);
 	bIsBeingControlled = true;
@@ -38,6 +40,7 @@ void ADFTowerBase::OnControlStart_Implementation(ADFPlayerPawn* NewPlayerPawn)
 
 void ADFTowerBase::OnControlEnd_Implementation()
 {
+	DF_LOG(LogDF, Log, TEXT("Start"));
 	bIsBeingControlled = false;
 	ControllingPlayerPawn = nullptr;
 	SetOwner(nullptr);
@@ -45,6 +48,7 @@ void ADFTowerBase::OnControlEnd_Implementation()
 
 void ADFTowerBase::OnRep_ControllingPlayerPawn_Implementation()
 {	
+	DF_LOG(LogDFNET, Log, TEXT("Start"));
 	if (ControllingPlayerPawn.IsValid())
 	{
 		OnControlStart(ControllingPlayerPawn.Get());

@@ -7,6 +7,7 @@
 #include "Player/DFPlayerController.h"
 #include "AbilitySystemComponent.h"
 #include "DefenseForce.h"
+#include "DFLog.h"
 
 ADFPlayerPawn::ADFPlayerPawn() : PlayerAimLocation(FVector::Zero())
 {
@@ -26,6 +27,7 @@ void ADFPlayerPawn::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	DFPlayerController = CastChecked<ADFPlayerController>(NewController);
 	DFPlayerController->OnTowerControlStart.AddDynamic(this, &ADFPlayerPawn::OnTowerControlStartCallback);
 	DFPlayerController->OnTowerControlEnd.AddDynamic(this, &ADFPlayerPawn::OnTowerControlEndCallback);
@@ -57,6 +59,7 @@ void ADFPlayerPawn::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	IAbilitySystemInterface* PSGASInterface = Cast<IAbilitySystemInterface>(GetPlayerState());
 	if (PSGASInterface)
 	{
@@ -102,6 +105,7 @@ void ADFPlayerPawn::OnRep_Controller()
 {
 	Super::OnRep_Controller();
 
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	if (Controller)
 	{
 		DFPlayerController = CastChecked<ADFPlayerController>(Controller);
