@@ -110,11 +110,6 @@ void ADFPlayerPawn::OnRep_Controller()
 	}
 }
 
-void ADFPlayerPawn::OnRep_PlayerAimLocation()
-{
-	UE_LOG(LogTemp, Log, TEXT("[%s]: OnRep_PlayerAimLocation"), GetNetMode() == ENetMode::NM_Client ? TEXT("Client") : TEXT("Server"));
-}
-
 UAbilitySystemComponent* ADFPlayerPawn::GetAbilitySystemComponent() const
 {
 	return ASC.Get();

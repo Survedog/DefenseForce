@@ -49,9 +49,6 @@ public:
 protected:	
 	virtual void OnRep_Controller() override;
 
-	UFUNCTION()
-	void OnRep_PlayerAimLocation();
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTowerControlStartCallback(class ADFTowerBase* NewControlledTower);
 
@@ -62,7 +59,7 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "PlayerControl")
 	TWeakObjectPtr<class ADFPlayerController> DFPlayerController;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_PlayerAimLocation, Category = "Player Control")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "Player Control")
 	FVector PlayerAimLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Control")
