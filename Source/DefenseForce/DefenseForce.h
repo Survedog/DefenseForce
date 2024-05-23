@@ -11,4 +11,6 @@ enum class EDFAbilityInputID : uint8
 	None			UMETA(DisplayName = "None"),
 	// 1 TowerControl
 	TowerControl	UMETA(DisplayName = "TowerControl"),
+	// 2 Attack
+	Attack			UMETA(DisplayName = "Attack"),
 };
