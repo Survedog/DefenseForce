@@ -106,11 +106,11 @@ void ADFPlayerPawn::OnRep_Controller()
 	Super::OnRep_Controller();
 
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	if (Controller)
+	if (Controller && Controller != DFPlayerController)
 	{
 		DFPlayerController = CastChecked<ADFPlayerController>(Controller);
-		DFPlayerController->OnTowerControlStart.AddDynamic(this, &ADFPlayerPawn::OnTowerControlStartCallback);
-		DFPlayerController->OnTowerControlEnd.AddDynamic(this, &ADFPlayerPawn::OnTowerControlEndCallback);
+		DFPlayerController->OnTowerControlStart.AddUniqueDynamic(this, &ADFPlayerPawn::OnTowerControlStartCallback);
+		DFPlayerController->OnTowerControlEnd.AddUniqueDynamic(this, &ADFPlayerPawn::OnTowerControlEndCallback);
 	}
 }
 
