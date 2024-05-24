@@ -55,6 +55,16 @@ void ADFEnemyCharacter::SetMoveSpeed(float NewMoveSpeed)
 {
 	CharacterAttributeSet->SetMoveSpeed(NewMoveSpeed);
 }
+
+float ADFEnemyCharacter::GetDamageToApply() const
+{
+	return CharacterAttributeSet->GetDamageToApply();
+}
+
+void ADFEnemyCharacter::SetDamageToApply(float NewDamageToApply)
+{
+	CharacterAttributeSet->SetDamageToApply(NewDamageToApply);
+}
 #pragma endregion
 
 void ADFEnemyCharacter::BeginPlay()

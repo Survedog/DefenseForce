@@ -40,11 +40,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
 	FORCEINLINE void SetMoveSpeed(float NewMoveSpeed);
 
-	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
-	FORCEINLINE float GetDamageToApply() const;
-	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
-	FORCEINLINE void SetDamageToApply(float NewDamageToApply);
-
 protected:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UAbilitySystemComponent> ASC;
