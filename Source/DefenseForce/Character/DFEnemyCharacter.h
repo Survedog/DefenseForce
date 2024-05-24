@@ -23,6 +23,14 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDead();
 
+// General
+public:
+	float GetDropMoneyAmount() const { return DropMoneyAmount; }
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
+	float DropMoneyAmount;
+
 //Attributes
 public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")

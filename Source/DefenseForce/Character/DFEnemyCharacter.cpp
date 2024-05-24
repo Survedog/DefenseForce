@@ -10,6 +10,8 @@ ADFEnemyCharacter::ADFEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	DropMoneyAmount = 100.0f;
+
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	CharacterAttributeSet = CreateDefaultSubobject<UDFCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 
