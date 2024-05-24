@@ -18,7 +18,7 @@ class DEFENSEFORCE_API ADFPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	ADFPlayerController();	
+	ADFPlayerController();
 
 	FORCEINLINE class ADFStructureBase* GetStructureUnderCursor() { return CurrentStructureUnderCursor.Get(); }
 
@@ -29,6 +29,7 @@ public:
 	void OnEndCursorOverStructureCallback(AActor* TouchedActor);
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void AcknowledgePossession(class APawn* P) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

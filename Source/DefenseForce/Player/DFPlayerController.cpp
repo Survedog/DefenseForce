@@ -68,6 +68,13 @@ void ADFPlayerController::OnEndCursorOverStructureCallback_Implementation(AActor
 	}
 }
 
+void ADFPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+}
+
 void ADFPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
