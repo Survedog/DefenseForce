@@ -9,6 +9,28 @@ UDFCharacterAttributeSet::UDFCharacterAttributeSet() : MaxHp(100.0f), DamageToAp
 	InitHp(MaxHp.GetBaseValue());
 }
 
+void UDFCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	// Don't call original super function.
+	if (Attribute == GetHpAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHp());
+	}
+}
+
+void UDFCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	// Don't call original super function.
+	if (Attribute == GetHpAttribute())
+	{
+		if (FMath::IsNearlyZero(NewValue) && !bIsDead)
+		{
+			bIsDead = true;
+			OnHpZero.Broadcast();
+		}
+	}
+}
+
 void UDFCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
