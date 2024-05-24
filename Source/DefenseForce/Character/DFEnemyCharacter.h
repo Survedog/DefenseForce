@@ -17,6 +17,12 @@ public:
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDead();
+
 //Attributes
 public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
@@ -34,9 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
 	FORCEINLINE void SetMoveSpeed(float NewMoveSpeed);
 
-protected:
-	virtual void BeginPlay() override;
-
+protected:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 

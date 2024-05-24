@@ -63,11 +63,7 @@ void ADFEnemyCharacter::BeginPlay()
 	
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	ASC->InitAbilityActorInfo(this, this);
-
-	if (HasAuthority())
-	{
-		CharacterAttributeSet->OnHpZero.AddDynamic(this, &ADFEnemyCharacter::OnDead);
-	}
+	CharacterAttributeSet->OnHpZero.AddDynamic(this, &ADFEnemyCharacter::OnDead);
 }
 
 void ADFEnemyCharacter::OnDead_Implementation()

@@ -31,16 +31,16 @@ public:
 	ATTRIBUTE_ACCESSORS(UDFCharacterAttributeSet, DamageToApply);
 	ATTRIBUTE_ACCESSORS(UDFCharacterAttributeSet, MoveSpeed);
 
+	UPROPERTY(BlueprintAssignable, Meta = (HideInDetailsView))
+	mutable FOnHpZeroDelegate OnHpZero;
+
 protected:
 	//virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
 	//virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	UPROPERTY(BlueprintAssignable, Meta = (HideInDetailsView))
-	mutable FOnHpZeroDelegate OnHpZero;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;	
 
 protected:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Hp, Category = "Health", Meta = (AllowPrivateAccess = true))

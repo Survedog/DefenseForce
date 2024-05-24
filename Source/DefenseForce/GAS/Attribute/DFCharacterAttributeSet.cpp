@@ -23,7 +23,7 @@ void UDFCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 	// Don't call original super function.
 	if (Attribute == GetHpAttribute())
 	{
-		if (FMath::IsNearlyZero(NewValue) && !bIsDead)
+		if (GetOwningActor()->HasAuthority() && FMath::IsNearlyZero(NewValue) && !bIsDead)
 		{
 			bIsDead = true;
 			OnHpZero.Broadcast();
