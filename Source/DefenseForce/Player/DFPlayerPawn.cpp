@@ -93,10 +93,22 @@ void ADFPlayerPawn::AbilityInputReleased(EDFAbilityInputID InputID)
 	if (Spec)
 	{
 		Spec->InputPressed = false;
-
 		if (Spec->IsActive())
 		{
 			ASC->AbilitySpecInputReleased(*Spec);
+		}
+	}
+}
+
+void ADFPlayerPawn::CancelInputAbility(EDFAbilityInputID InputID)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
+	if (Spec)
+	{
+		Spec->InputPressed = false;
+		if (Spec->IsActive())
+		{
+			ASC->CancelAbilityHandle(Spec->Handle);
 		}
 	}
 }

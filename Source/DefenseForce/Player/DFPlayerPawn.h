@@ -32,6 +32,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void AbilityInputReleased(EDFAbilityInputID InputID);
 
+	UFUNCTION(BlueprintCallable)
+	void CancelInputAbility(EDFAbilityInputID InputID);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TWeakObjectPtr<class UAbilitySystemComponent> ASC;

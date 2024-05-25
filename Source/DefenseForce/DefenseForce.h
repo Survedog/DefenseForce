@@ -13,4 +13,6 @@ enum class EDFAbilityInputID : uint8
 	TowerControl	UMETA(DisplayName = "TowerControl"),
 	// 2 Attack
 	Attack			UMETA(DisplayName = "Attack"),
+	// 3 BuildStructure
+	BuildStructure	UMETA(DisplayName = "BuildStructure"),
 };
