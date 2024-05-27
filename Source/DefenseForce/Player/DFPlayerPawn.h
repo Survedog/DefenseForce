@@ -33,7 +33,10 @@ protected:
 	void AbilityInputReleased(EDFAbilityInputID InputID);
 
 	UFUNCTION(BlueprintCallable)
-	void CancelInputAbility(EDFAbilityInputID InputID);
+	bool TryActivateAbilityOfClass(TSubclassOf<UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation);
+
+	UFUNCTION(BlueprintCallable)
+	void CancelAbilityOfClass(TSubclassOf<UGameplayAbility> InAbilityClass);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")

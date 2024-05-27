@@ -100,16 +100,22 @@ void ADFPlayerPawn::AbilityInputReleased(EDFAbilityInputID InputID)
 	}
 }
 
-void ADFPlayerPawn::CancelInputAbility(EDFAbilityInputID InputID)
+bool ADFPlayerPawn::TryActivateAbilityOfClass(TSubclassOf<UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation)
 {
-	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
-	if (Spec)
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
+	if (Spec && !Spec->IsActive())
 	{
-		Spec->InputPressed = false;
-		if (Spec->IsActive())
-		{
-			ASC->CancelAbilityHandle(Spec->Handle);
-		}
+		return ASC->TryActivateAbilityByClass(InAbilityClass, bAllowRemoteActivation);
+	}
+	return false;
+}
+
+void ADFPlayerPawn::CancelAbilityOfClass(TSubclassOf<UGameplayAbility> InAbilityClass)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
+	if (Spec && Spec->IsActive())
+	{
+		ASC->CancelAbilityHandle(Spec->Handle);
 	}
 }
 
