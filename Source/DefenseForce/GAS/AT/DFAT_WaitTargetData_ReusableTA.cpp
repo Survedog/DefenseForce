@@ -33,8 +33,8 @@ void UDFAT_WaitTargetData_ReusableTA::Activate()
 
 	if (TargetActor)
 	{
-		RegisterTargetDataCallbacks();
 		InitializeTargetActor(TargetActor);
+		RegisterTargetDataCallbacks();
 		FinalizeTargetActor(TargetActor); // Note that the call to FinalizeTargetActor, this task could finish and our owning ability may be ended.
 	}
 	else
@@ -92,7 +92,7 @@ void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReplicatedCancelledCallback()
 	EndTask();
 }
 
-/** The TargetActor we spawned locally has called back with valid target data */
+/** The TargetActor has called back with valid target data */
 void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& Data)
 {
 	check(AbilitySystemComponent.IsValid());
@@ -181,6 +181,10 @@ void UDFAT_WaitTargetData_ReusableTA::InitializeTargetActor(AGameplayAbilityTarg
 	if (!InTargetActor->TargetDataReadyDelegate.IsBoundToObject(this))
 	{
 		InTargetActor->TargetDataReadyDelegate.AddUObject(const_cast<UDFAT_WaitTargetData_ReusableTA*>(this), &UDFAT_WaitTargetData_ReusableTA::OnTargetDataReadyCallback);
+	}
+
+	if (!InTargetActor->CanceledDelegate.IsBoundToObject(this))
+	{
 		InTargetActor->CanceledDelegate.AddUObject(const_cast<UDFAT_WaitTargetData_ReusableTA*>(this), &UDFAT_WaitTargetData_ReusableTA::OnTargetDataCancelledCallback);
 	}
 }
