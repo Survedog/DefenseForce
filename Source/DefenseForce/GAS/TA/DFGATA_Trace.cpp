@@ -187,6 +187,21 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 	}
 }
 
+void ADFGATA_Trace::StopTargeting()
+{
+	SetActorTickEnabled(false);
+
+	TargetDataReadyDelegate.Clear();
+	CanceledDelegate.Clear();
+	
+	if (GenericDelegateBoundASC)
+	{
+		GenericDelegateBoundASC->GenericLocalConfirmCallbacks.RemoveDynamic(this, &AGameplayAbilityTargetActor::ConfirmTargeting);
+		GenericDelegateBoundASC->GenericLocalCancelCallbacks.RemoveDynamic(this, &AGameplayAbilityTargetActor::CancelTargeting);
+		GenericDelegateBoundASC = nullptr;
+	}
+}
+
 FHitResult ADFGATA_Trace::PerformTrace(AActor* InSourceActor)
 {
 	bool bTraceComplex = false;

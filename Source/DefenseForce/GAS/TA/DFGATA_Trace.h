@@ -37,6 +37,8 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void StopTargeting();
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	float MaxRange;
