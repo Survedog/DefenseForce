@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "AbilitySystemLog.h"
+#include "DFLog.h"
 
 ADFGATA_Trace::ADFGATA_Trace()
 {
@@ -82,6 +83,7 @@ bool ADFGATA_Trace::ClipCameraRayToAbilityRange(FVector CameraLocation, FVector 
 void ADFGATA_Trace::StartTargeting(UGameplayAbility* InAbility)
 {
 	Super::StartTargeting(InAbility);
+	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
 
 	SetActorTickEnabled(true);
 	SourceActor = InAbility->GetCurrentActorInfo()->AvatarActor.Get();
@@ -123,6 +125,8 @@ void ADFGATA_Trace::StartTargeting(UGameplayAbility* InAbility)
 void ADFGATA_Trace::ConfirmTargetingAndContinue()
 {
 	check(ShouldProduceTargetData());
+	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
+
 	if (SourceActor)
 	{
 		bDebug = false;
@@ -133,6 +137,7 @@ void ADFGATA_Trace::ConfirmTargetingAndContinue()
 
 void ADFGATA_Trace::CancelTargeting()
 {
+	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
 	const FGameplayAbilityActorInfo* ActorInfo = (OwningAbility ? OwningAbility->GetCurrentActorInfo() : nullptr);
 	UAbilitySystemComponent* ASC = (ActorInfo ? ActorInfo->AbilitySystemComponent.Get() : nullptr);
 	if (ASC)
@@ -152,11 +157,13 @@ void ADFGATA_Trace::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
 	SetActorTickEnabled(false);
 }
 
 void ADFGATA_Trace::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
 	if (ReticleActor.IsValid())
 	{
 		ReticleActor->Destroy();
@@ -189,6 +196,7 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 void ADFGATA_Trace::StopTargeting()
 {
+	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
 	SetActorTickEnabled(false);
 
 	TargetDataReadyDelegate.Clear();
