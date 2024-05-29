@@ -2,7 +2,7 @@
 
 
 #include "GAS/GA/GA_BuildStructure.h"
-#include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
+#include "GAS/AT/DFAT_WaitTargetData_ReusableTA.h"
 #include "GAS/TA/DFGATA_Trace.h"
 #include "DFLog.h"
 
@@ -14,22 +14,40 @@
 //	EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 //}
 
+UGA_BuildStructure::UGA_BuildStructure() : DFTraceTargetActor(nullptr)
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
+}
+
 void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
-	TSubclassOf<AGameplayAbilityTargetActor> TargetActorClass = ADFGATA_Trace::StaticClass();
-	UAbilityTask_WaitTargetData* WaitTargetDataTask = UAbilityTask_WaitTargetData::WaitTargetData(this, FName("WaitBuildTargetData"), EGameplayTargetingConfirmation::Type::UserConfirmed, TargetActorClass);
-	if (WaitTargetDataTask)
+	
+	if (!DFTraceTargetActor)
 	{
-		AGameplayAbilityTargetActor* TargetActor = nullptr;
-		WaitTargetDataTask->ValidData.AddDynamic(this, &UGA_BuildStructure::OnTargetDataReadyCallback);
-		WaitTargetDataTask->Cancelled.AddDynamic(this, &UGA_BuildStructure::OnTargetDataCancelledCallback);
-		if (WaitTargetDataTask->BeginSpawningActor(this, TargetActorClass, TargetActor))
+		DF_NETGASLOG(LogDFGAS, Log, TEXT("Spawning target actor."));
+		DFTraceTargetActor = GetWorld()->SpawnActor<ADFGATA_Trace>(ADFGATA_Trace::StaticClass(), FTransform::Identity);
+	}
+
+	if (DFTraceTargetActor)
+	{
+		// TODO: Reuse AbilityTask
+		UDFAT_WaitTargetData_ReusableTA* WaitTargetDataTask = UDFAT_WaitTargetData_ReusableTA::WaitTargetDataUsingReusableTA(this, FName("WaitBuildTargetData"), EGameplayTargetingConfirmation::Type::UserConfirmed, DFTraceTargetActor);
+		if (WaitTargetDataTask)
 		{
-			WaitTargetDataTask->FinishSpawningActor(this, TargetActor);
+			WaitTargetDataTask->ValidData.AddDynamic(this, &UGA_BuildStructure::OnTargetDataReadyCallback);
+			WaitTargetDataTask->Cancelled.AddDynamic(this, &UGA_BuildStructure::OnTargetDataCancelledCallback);
+			WaitTargetDataTask->ReadyForActivation();
 		}
+	}
+	else
+	{
+		DF_NETGASLOG(LogDFGAS, Error, TEXT("Target actor is nullptr."));
+		CancelAbility(Handle, ActorInfo, ActivationInfo, true);
 	}
 }
 
@@ -38,6 +56,12 @@ void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+
+	// TODO: Reuse target actor
+	if (DFTraceTargetActor) 
+	{
+		DFTraceTargetActor->Destroy();
+	}
 }
 
 void UGA_BuildStructure::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)

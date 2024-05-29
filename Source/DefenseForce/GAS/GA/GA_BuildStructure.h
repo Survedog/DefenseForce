@@ -14,6 +14,9 @@ class DEFENSEFORCE_API UGA_BuildStructure : public UGameplayAbility
 {
 	GENERATED_BODY()
 	
+public:
+	UGA_BuildStructure();
+
 protected:
 	//virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
@@ -27,4 +30,7 @@ protected:
 
 	UFUNCTION()
 	void OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
+
+protected:
+	class ADFGATA_Trace* DFTraceTargetActor;
 };
