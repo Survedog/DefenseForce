@@ -120,6 +120,8 @@ void ADFGATA_Trace::StartTargeting(UGameplayAbility* InAbility)
 			}
 		}
 	}
+
+	OnStartTargeting(InAbility);
 }
 
 void ADFGATA_Trace::ConfirmTargetingAndContinue()
@@ -127,11 +129,12 @@ void ADFGATA_Trace::ConfirmTargetingAndContinue()
 	check(ShouldProduceTargetData());
 	DF_NETLOG(LogDFGAS, Log, TEXT("start"));
 
-	if (SourceActor)
+	if (SourceActor && IsConfirmTargetingAllowed())
 	{
 		bDebug = false;
 		FGameplayAbilityTargetDataHandle Handle = MakeTargetData(PerformTrace(SourceActor));
 		TargetDataReadyDelegate.Broadcast(Handle);
+		OnConfirmTargeting();
 	}
 }
 
@@ -151,6 +154,7 @@ void ADFGATA_Trace::CancelTargeting()
 
 	CanceledDelegate.Broadcast(FGameplayAbilityTargetDataHandle());
 	SetActorTickEnabled(false);
+	OnCancelTargeting();	
 }
 
 void ADFGATA_Trace::BeginPlay()
@@ -208,6 +212,8 @@ void ADFGATA_Trace::StopTargeting()
 		GenericDelegateBoundASC->GenericLocalCancelCallbacks.RemoveDynamic(this, &AGameplayAbilityTargetActor::CancelTargeting);
 		GenericDelegateBoundASC = nullptr;
 	}
+
+	OnStopTargeting();
 }
 
 FHitResult ADFGATA_Trace::PerformTrace(AActor* InSourceActor)

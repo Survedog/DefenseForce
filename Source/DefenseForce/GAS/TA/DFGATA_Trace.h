@@ -24,7 +24,7 @@ public:
 	static void SweepWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, const FQuat& Rotation, const FCollisionShape CollisionShape, FName ProfileName, const FCollisionQueryParams Params);
 
 	static bool ClipCameraRayToAbilityRange(FVector CameraLocation, FVector CameraDirection, FVector AbilityCenter, float AbilityRange, FVector& ClippedPosition);
-
+	
 	virtual void StartTargeting(UGameplayAbility* InAbility) override;
 
 	virtual void ConfirmTargetingAndContinue() override;
@@ -38,6 +38,23 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void StopTargeting();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnStartTargeting(UGameplayAbility* InAbility);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnConfirmTargeting();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnCancelTargeting();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnStopTargeting();
+
+	void OnStartTargeting_Implementation(UGameplayAbility* InAbility) {}
+	void OnConfirmTargeting_Implementation() {}
+	void OnCancelTargeting_Implementation() {}
+	void OnStopTargeting_Implementation() {}
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
@@ -61,5 +78,6 @@ protected:
 	FGameplayAbilityTargetDataHandle MakeTargetData(const FHitResult& HitResult) const;
 
 protected:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Targeting")
 	TWeakObjectPtr<AGameplayAbilityWorldReticle> ReticleActor;
 };
