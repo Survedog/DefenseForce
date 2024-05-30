@@ -272,7 +272,7 @@ FHitResult ADFGATA_Trace::PerformTrace(AActor* InSourceActor)
 		{
 			LocalReticleActor->SetActorHiddenInGame(false);
 			LocalReticleActor->SetIsTargetValid(true);
-			LocalReticleActor->SetIsTargetAnActor(true);
+			LocalReticleActor->SetIsTargetAnActor(ReturnHitResult.GetActor() != nullptr);
 			LocalReticleActor->SetActorLocation(ReturnHitResult.Location);
 		}
 		else
