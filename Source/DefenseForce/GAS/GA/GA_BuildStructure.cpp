@@ -97,9 +97,22 @@ void UGA_BuildStructure::InputPressed(const FGameplayAbilitySpecHandle Handle, c
 void UGA_BuildStructure::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+	for (int32 Idx = 0; Idx < TargetDataHandle.Num(); Idx++)
+	{		
+		if (const FGameplayAbilityTargetData* TargetData = TargetDataHandle.Get(Idx))
+		{
+			if (const FHitResult* TargetHitResult = TargetData->GetHitResult())
+			{
+				GetWorld()->SpawnActor<ADFStructureBase>(PlacedStructureClass, FTransform(TargetHitResult->Location));
+				break;
+			}
+		}
+	}
+	K2_EndAbility();
 }
 
 void UGA_BuildStructure::OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+	K2_CancelAbility();
 }
