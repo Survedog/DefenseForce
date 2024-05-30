@@ -80,6 +80,12 @@ void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+
+	// TODO: Reuse target actor
+	if (DFActorPlacementTA)
+	{
+		DFActorPlacementTA->Destroy();
+	}
 }
 
 void UGA_BuildStructure::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
