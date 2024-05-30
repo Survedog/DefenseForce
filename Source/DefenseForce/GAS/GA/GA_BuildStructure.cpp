@@ -3,7 +3,9 @@
 
 #include "GAS/GA/GA_BuildStructure.h"
 #include "GAS/AT/DFAT_WaitTargetData_ReusableTA.h"
-#include "GAS/TA/DFGATA_Trace.h"
+#include "GAS/TA/DFGATA_ActorPlacement.h"
+#include "GAS/TA/Reticle/GAWorldReticle_ActorVisualization.h"
+#include "Structure/DFStructureBase.h"
 #include "DFLog.h"
 
 //void UGA_BuildStructure::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -14,11 +16,23 @@
 //	EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 //}
 
-UGA_BuildStructure::UGA_BuildStructure() : DFTraceTargetActor(nullptr)
+UGA_BuildStructure::UGA_BuildStructure() : DFActorPlacementTA(nullptr)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
+
+	static ConstructorHelpers::FClassFinder<AGAWorldReticle_ActorVisualization> ReticleClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/TA/ReticleActor/BP_GAWorldReticle_ActorVisualization.BP_GAWorldReticle_ActorVisualization_C"));
+	if (ReticleClassRef.Class)
+	{
+		ActorVisualReticleClass = ReticleClassRef.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<ADFGATA_ActorPlacement> TargetActorClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/TA/BP_DFGATA_ActorPlacement.BP_DFGATA_ActorPlacement_C"));
+	if (TargetActorClassRef.Class)
+	{
+		ActorPlacementTAClass = TargetActorClassRef.Class;
+	}
 }
 
 void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -27,16 +41,26 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
 	
-	if (!DFTraceTargetActor)
+	if (!DFActorPlacementTA)
 	{
 		DF_NETGASLOG(LogDFGAS, Log, TEXT("Spawning target actor."));
-		DFTraceTargetActor = GetWorld()->SpawnActor<ADFGATA_Trace>(ADFGATA_Trace::StaticClass(), FTransform::Identity);
+		DFActorPlacementTA = GetWorld()->SpawnActor<ADFGATA_ActorPlacement>(ActorPlacementTAClass, FTransform::Identity);
+		DFActorPlacementTA->TraceProfile = FCollisionProfileName(TEXT("BlockOnlyWorld"));
+		DFActorPlacementTA->bIgnoreBlockingHits = false;
+		DFActorPlacementTA->bTraceStartsFromPlayerCamera = true;
+		DFActorPlacementTA->bTraceTowardMouseAimLocation = true;
+		DFActorPlacementTA->SetPlacedActorClass(PlacedStructureClass.Get());
+
+		if (ActorVisualReticleClass)
+		{
+			DFActorPlacementTA->ReticleClass = ActorVisualReticleClass;
+		}
 	}
 
-	if (DFTraceTargetActor)
+	if (DFActorPlacementTA)
 	{
 		// TODO: Reuse AbilityTask
-		UDFAT_WaitTargetData_ReusableTA* WaitTargetDataTask = UDFAT_WaitTargetData_ReusableTA::WaitTargetDataUsingReusableTA(this, FName("WaitBuildTargetData"), EGameplayTargetingConfirmation::Type::UserConfirmed, DFTraceTargetActor);
+		UDFAT_WaitTargetData_ReusableTA* WaitTargetDataTask = UDFAT_WaitTargetData_ReusableTA::WaitTargetDataUsingReusableTA(this, FName("WaitBuildTargetData"), EGameplayTargetingConfirmation::Type::UserConfirmed, DFActorPlacementTA);
 		if (WaitTargetDataTask)
 		{
 			WaitTargetDataTask->ValidData.AddDynamic(this, &UGA_BuildStructure::OnTargetDataReadyCallback);
@@ -58,9 +82,9 @@ void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
 
 	// TODO: Reuse target actor
-	if (DFTraceTargetActor) 
+	if (DFActorPlacementTA)
 	{
-		DFTraceTargetActor->Destroy();
+		DFActorPlacementTA->Destroy();
 	}
 }
 

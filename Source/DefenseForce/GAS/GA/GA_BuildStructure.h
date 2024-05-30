@@ -32,5 +32,16 @@ protected:
 	void OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 
 protected:
-	class ADFGATA_Trace* DFTraceTargetActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Build")
+	TSubclassOf<class ADFStructureBase> PlacedStructureClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
+	TSubclassOf<class ADFGATA_ActorPlacement> ActorPlacementTAClass;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Targeting")
+	TObjectPtr<class ADFGATA_ActorPlacement> DFActorPlacementTA;	
+
+	/** Which reticle class to use for targeting. Overrides reticle class field of target actor. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
+	TSubclassOf<class AGAWorldReticle_ActorVisualization> ActorVisualReticleClass;
 };
