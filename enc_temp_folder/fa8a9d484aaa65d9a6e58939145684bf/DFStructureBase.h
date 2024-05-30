@@ -15,8 +15,5 @@ public:
 	ADFStructureBase();
 
 protected:
-	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<class USceneComponent> RootSceneComponent;
+	virtual void BeginPlay() override;	
 };
