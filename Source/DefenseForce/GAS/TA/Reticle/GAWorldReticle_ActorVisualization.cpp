@@ -9,19 +9,29 @@
 AGAWorldReticle_ActorVisualization::AGAWorldReticle_ActorVisualization(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	//PrimaryActorTick.bCanEverTick = true;
-	//PrimaryActorTick.TickGroup = TG_PrePhysics;
+	bShouldFaceOwner = false;	
+	bAllowTickBeforeBeginPlay = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionCapsule0"));
 	CollisionComponent->InitCapsuleSize(0.f, 0.f);
 	CollisionComponent->AlwaysLoadOnClient = true;
 	CollisionComponent->SetUsingAbsoluteScale(true);
-	//CollisionComponent->AlwaysLoadOnServer = true;
+	CollisionComponent->AlwaysLoadOnServer = true;
 	CollisionComponent->SetCanEverAffectNavigation(false);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	//USceneComponent* SceneComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("RootComponent0"));
 	RootComponent = CollisionComponent;
+}
+
+void AGAWorldReticle_ActorVisualization::Tick(float DeltaSeconds)
+{
+	AActor::Tick(DeltaSeconds);
+
+	if (bShouldFaceOwner)
+	{
+		FaceTowardSource(bFaceOwnerFlat);
+	}
 }
 
 
