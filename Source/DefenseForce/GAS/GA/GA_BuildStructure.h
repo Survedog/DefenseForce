@@ -32,7 +32,7 @@ protected:
 	void OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Build")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Build")
 	TSubclassOf<class ADFStructureBase> PlacedStructureClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
