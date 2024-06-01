@@ -49,13 +49,13 @@ protected:
 protected:
 	/* PlayerBuildModeInterface */
 	virtual void EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass) override;
-	virtual void ExitBuildMode() override;
+	virtual void ExitBuildMode(class ADFStructureBase* InBuiltStructure) override;
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnEnterBuildMode();
+	void OnEnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnExitBuildMode();
+	void OnExitBuildMode(class ADFStructureBase* InBuiltStructure);
 
 public:
 	UPROPERTY(BlueprintAssignable)

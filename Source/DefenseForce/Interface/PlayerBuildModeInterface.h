@@ -26,5 +26,5 @@ public:
 	virtual void EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass) = 0;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void ExitBuildMode() = 0;
+	virtual void ExitBuildMode(class ADFStructureBase* InBuiltStructure) = 0;
 };

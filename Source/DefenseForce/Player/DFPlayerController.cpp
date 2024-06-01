@@ -65,13 +65,13 @@ void ADFPlayerController::EnterBuildMode(TSubclassOf<class ADFStructureBase> InT
 		DFPlayerPawn->GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag(TEXT("Player.Action.BuildStructure")), &Payload);
 	}
 	
-	OnEnterBuildMode();
+	OnEnterBuildMode(InTargetStructureClass);
 }
 
-void ADFPlayerController::ExitBuildMode()
+void ADFPlayerController::ExitBuildMode(class ADFStructureBase* InBuiltStructure)
 {
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	OnExitBuildMode();
+	OnExitBuildMode(InBuiltStructure);
 }
 
 void ADFPlayerController::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)
