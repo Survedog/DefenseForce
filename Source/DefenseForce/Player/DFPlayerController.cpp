@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Structure/DFTowerBase.h"
 #include "Net/UnrealNetwork.h"
+#include "Game/DFGameState.h"
 #include "DFLog.h"
 
 ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentStructureUnderCursor(nullptr), CurrentControlledTower(nullptr)
@@ -53,9 +54,15 @@ void ADFPlayerController::OnRep_CurrentControlledTower()
 	}
 }
 
-void ADFPlayerController::EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass)
+void ADFPlayerController::EnterBuildMode(TSubclassOf<ADFStructureBase> InTargetStructureClass)
 {
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
+	if (!CanBuildStructure(InTargetStructureClass))
+	{
+		DF_NETLOG(LogDFNET, Log, TEXT("Can't afford the build cost of target structure."));
+		return;
+	}
+
 	if (DFPlayerPawn)
 	{
 		FGameplayEventData Payload;
@@ -68,10 +75,17 @@ void ADFPlayerController::EnterBuildMode(TSubclassOf<class ADFStructureBase> InT
 	OnEnterBuildMode(InTargetStructureClass);
 }
 
-void ADFPlayerController::ExitBuildMode(class ADFStructureBase* InBuiltStructure)
+void ADFPlayerController::ExitBuildMode(ADFStructureBase* InBuiltStructure)
 {
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	OnExitBuildMode(InBuiltStructure);
+}
+
+bool ADFPlayerController::CanBuildStructure(TSubclassOf<ADFStructureBase> InTargetStructureClass) const
+{
+	const float BuildCost = CastChecked<ADFStructureBase>(InTargetStructureClass->GetDefaultObject())->GetBuildCost();
+	const float CurrentMoneyAmount = CastChecked<ADFGameState>(GetWorld()->GetGameState())->GetCurrentMoneyAmount();
+	return CurrentMoneyAmount >= BuildCost;
 }
 
 void ADFPlayerController::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)

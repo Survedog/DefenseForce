@@ -51,6 +51,8 @@ protected:
 	virtual void EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass) override;
 	virtual void ExitBuildMode(class ADFStructureBase* InBuiltStructure) override;
 	
+	bool CanBuildStructure(TSubclassOf<class ADFStructureBase> InTargetStructureClass) const;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnEnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass);
 
