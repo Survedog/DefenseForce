@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Interface/PlayerTowerControlInterface.h"
+#include "Interface/PlayerBuildModeInterface.h"
 #include "DFPlayerController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlStartDelegate, ADFTowerBase*, NewControlledTower);
@@ -14,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlEndDelegate, ADFTower
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API ADFPlayerController : public APlayerController, public IPlayerTowerControlInterface
+class DEFENSEFORCE_API ADFPlayerController : public APlayerController, public IPlayerTowerControlInterface, public IPlayerBuildModeInterface
 {
 	GENERATED_BODY()
 	
@@ -36,13 +37,25 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	virtual void StartTowerControl_Implementation(class ADFTowerBase* NewTower) override;
-	virtual void EndTowerControl_Implementation() override;
-	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() const override { return CurrentControlledTower.Get(); }
-	virtual class ADFStructureBase* GetCurrentStructureUnderCursor_Implementation() const override { return CurrentStructureUnderCursor.Get(); }
+	/* PlayerTowerControlInterface */
+	virtual void StartTowerControl(class ADFTowerBase* NewTower) override;
+	virtual void EndTowerControl() override;
+	virtual class ADFTowerBase* GetCurrentControlledTower() const override { return CurrentControlledTower.Get(); }
+	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const override { return CurrentStructureUnderCursor.Get(); }
 
 	UFUNCTION()
 	void OnRep_CurrentControlledTower();
+
+protected:
+	/* PlayerBuildModeInterface */
+	virtual void EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass) override;
+	virtual void ExitBuildMode() override;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEnterBuildMode();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnExitBuildMode();
 
 public:
 	UPROPERTY(BlueprintAssignable)

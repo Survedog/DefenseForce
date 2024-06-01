@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "PlayerTowerControlInterface.generated.h"
+#include "PlayerBuildModeInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
-class UPlayerTowerControlInterface : public UInterface
+class UPlayerBuildModeInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,21 +16,15 @@ class UPlayerTowerControlInterface : public UInterface
 /**
  * 
  */
-class DEFENSEFORCE_API IPlayerTowerControlInterface
+class DEFENSEFORCE_API IPlayerBuildModeInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void StartTowerControl(class ADFTowerBase* NewTower) = 0;
+	virtual void EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass) = 0;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void EndTowerControl() = 0;
-
-	UFUNCTION(BlueprintCallable)
-	virtual class ADFTowerBase* GetCurrentControlledTower() const = 0;
-
-	UFUNCTION(BlueprintCallable)
-	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const = 0;
+	virtual void ExitBuildMode() = 0;
 };

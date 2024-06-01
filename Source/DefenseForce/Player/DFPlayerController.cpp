@@ -14,7 +14,7 @@ ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentStruc
 	bEnableMouseOverEvents = true;
 }
 
-void ADFPlayerController::StartTowerControl_Implementation(ADFTowerBase* NewTower)
+void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (!NewTower->IsBeingControlled())
@@ -29,7 +29,7 @@ void ADFPlayerController::StartTowerControl_Implementation(ADFTowerBase* NewTowe
 	}
 }
 
-void ADFPlayerController::EndTowerControl_Implementation()
+void ADFPlayerController::EndTowerControl()
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (CurrentControlledTower && CurrentControlledTower->IsBeingControlled())
@@ -51,6 +51,25 @@ void ADFPlayerController::OnRep_CurrentControlledTower()
 	{
 		OnTowerControlEnd.Broadcast(CurrentControlledTower);
 	}
+}
+
+void ADFPlayerController::EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass)
+{
+	if (DFPlayerPawn)
+	{
+		FGameplayEventData Payload;
+		Payload.Instigator = this;
+		Payload.Target = DFPlayerPawn;
+		Payload.OptionalObject = InTargetStructureClass->GetDefaultObject();
+		DFPlayerPawn->GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag(TEXT("Player.Action.BuildStructure")), &Payload);
+	}
+	
+	OnEnterBuildMode();
+}
+
+void ADFPlayerController::ExitBuildMode()
+{
+	OnExitBuildMode();
 }
 
 void ADFPlayerController::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)

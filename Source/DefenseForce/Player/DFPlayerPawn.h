@@ -26,7 +26,7 @@ protected:
 	virtual void OnRep_PlayerState() override;
 
 // GAS
-protected:
+public:
 	UFUNCTION(BlueprintCallable)
 	void AbilityInputPressed(EDFAbilityInputID InputID);
 
@@ -56,10 +56,10 @@ public:
 protected:	
 	virtual void OnRep_Controller() override;
 
-	virtual void StartTowerControl_Implementation(class ADFTowerBase* NewTower) override;
-	virtual void EndTowerControl_Implementation() override;
-	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() const override;
-	virtual class ADFStructureBase* GetCurrentStructureUnderCursor_Implementation() const override;
+	virtual void StartTowerControl(class ADFTowerBase* NewTower) override;
+	virtual void EndTowerControl() override;
+	virtual class ADFTowerBase* GetCurrentControlledTower() const override;
+	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTowerControlStartCallback(class ADFTowerBase* NewControlledTower);
