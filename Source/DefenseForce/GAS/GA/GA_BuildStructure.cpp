@@ -6,17 +6,10 @@
 #include "GAS/TA/DFGATA_ActorPlacement.h"
 #include "GAS/TA/Reticle/GAWorldReticle_ActorVisualization.h"
 #include "Structure/DFStructureBase.h"
+#include "Interface/PlayerBuildModeInterface.h"
 #include "DFLog.h"
 
-//void UGA_BuildStructure::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
-//{
-//	// Don't call original super function.
-//	bool bReplicateEndAbility = true;
-//	bool bWasCancelled = false;
-//	EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-//}
-
-UGA_BuildStructure::UGA_BuildStructure() : PlacedStructureClass(nullptr), DFActorPlacementTA(nullptr)
+UGA_BuildStructure::UGA_BuildStructure() : TargetStructureClass(nullptr), BuiltStructure(nullptr), DFActorPlacementTA(nullptr)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
@@ -41,6 +34,7 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
 	
+	BuiltStructure = nullptr;
 	if (!DFActorPlacementTA)
 	{
 		DF_NETGASLOG(LogDFGAS, Log, TEXT("Spawning target actor."));		
@@ -52,10 +46,10 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		DFActorPlacementTA->ReticleClass = ActorVisualReticleClass;
 	}
 
-	PlacedStructureClass = TriggerEventData->OptionalObject->GetClass();
-	if (PlacedStructureClass != DFActorPlacementTA->GetPlacedActorClass())
+	TargetStructureClass = TriggerEventData->OptionalObject->GetClass();
+	if (TargetStructureClass != DFActorPlacementTA->GetPlacedActorClass())
 	{
-		DFActorPlacementTA->SetPlacedActorClass(PlacedStructureClass);		
+		DFActorPlacementTA->SetPlacedActorClass(TargetStructureClass);
 	}
 
 	if (DFActorPlacementTA)
@@ -81,13 +75,15 @@ void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
-	PlacedStructureClass = nullptr;
-}
-
-void UGA_BuildStructure::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
-{
-	// Don't call original super function.
-	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+	if (APawn* AvatarPawn = Cast<APawn>(ActorInfo->AvatarActor))
+	{
+		if (IPlayerBuildModeInterface* BuildModeInterface = Cast<IPlayerBuildModeInterface>(AvatarPawn->GetController()))
+		{
+			BuildModeInterface->ExitBuildMode(BuiltStructure.Get());
+		}
+	}
+	TargetStructureClass = nullptr;
+	BuiltStructure = nullptr;
 }
 
 void UGA_BuildStructure::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
@@ -98,8 +94,8 @@ void UGA_BuildStructure::OnTargetDataReadyCallback(const FGameplayAbilityTargetD
 		if (const FGameplayAbilityTargetData* TargetData = TargetDataHandle.Get(Idx))
 		{
 			if (const FHitResult* TargetHitResult = TargetData->GetHitResult())
-			{
-				GetWorld()->SpawnActor<ADFStructureBase>(PlacedStructureClass, FTransform(TargetHitResult->Location));
+			{				
+				BuiltStructure = GetWorld()->SpawnActor<ADFStructureBase>(TargetStructureClass, FTransform(TargetHitResult->Location));
 				break;
 			}
 		}
