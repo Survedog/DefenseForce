@@ -137,7 +137,7 @@ void ADFPlayerPawn::StartTowerControl_Implementation(ADFTowerBase* NewTower)
 	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
 	if (TowerControlInterface)
 	{
-		TowerControlInterface->StartTowerControl(NewTower);
+		TowerControlInterface->Execute_StartTowerControl(GetController(), NewTower);
 	}
 }
 
@@ -146,7 +146,7 @@ void ADFPlayerPawn::EndTowerControl_Implementation()
 	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
 	if (TowerControlInterface)
 	{
-		TowerControlInterface->EndTowerControl();
+		TowerControlInterface->Execute_EndTowerControl(GetController());
 	}
 }
 
@@ -155,7 +155,7 @@ ADFTowerBase* ADFPlayerPawn::GetCurrentControlledTower_Implementation() const
 	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
 	if (TowerControlInterface)
 	{
-		return TowerControlInterface->GetCurrentControlledTower();
+		return TowerControlInterface->Execute_GetCurrentControlledTower(GetController());
 	}
 	return nullptr;
 }
@@ -165,7 +165,7 @@ ADFStructureBase* ADFPlayerPawn::GetCurrentStructureUnderCursor_Implementation()
 	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
 	if (TowerControlInterface)
 	{
-		return TowerControlInterface->GetCurrentStructureUnderCursor();
+		return TowerControlInterface->Execute_GetCurrentStructureUnderCursor(GetController());
 	}
 	return nullptr;
 }
