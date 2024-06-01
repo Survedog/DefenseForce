@@ -14,9 +14,16 @@ class DEFENSEFORCE_API ADFStructureBase : public AActor
 public:
 	ADFStructureBase();
 
+	FORCEINLINE float GetBuildCost() const { return BuildCost; }
+	FORCEINLINE void SetBuildCost(float NewBuildCost) { BuildCost = NewBuildCost; }
+
 protected:
 	virtual void BeginPlay() override;
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class USceneComponent> RootSceneComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float BuildCost;
 };

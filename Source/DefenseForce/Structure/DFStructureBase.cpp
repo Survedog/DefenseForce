@@ -11,6 +11,8 @@ ADFStructureBase::ADFStructureBase()
 
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
 	RootComponent = RootSceneComponent;
+
+	BuildCost = 0.0f;
 }
 
 void ADFStructureBase::BeginPlay()
