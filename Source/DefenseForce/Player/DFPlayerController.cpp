@@ -55,6 +55,7 @@ void ADFPlayerController::OnRep_CurrentControlledTower()
 
 void ADFPlayerController::EnterBuildMode(TSubclassOf<class ADFStructureBase> InTargetStructureClass)
 {
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	if (DFPlayerPawn)
 	{
 		FGameplayEventData Payload;
@@ -69,6 +70,7 @@ void ADFPlayerController::EnterBuildMode(TSubclassOf<class ADFStructureBase> InT
 
 void ADFPlayerController::ExitBuildMode()
 {
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	OnExitBuildMode();
 }
 
