@@ -132,6 +132,34 @@ void ADFPlayerPawn::OnRep_Controller()
 	}
 }
 
+void ADFPlayerPawn::StartTowerControl_Implementation(ADFTowerBase* NewTower)
+{
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
+	if (TowerControlInterface)
+	{
+		TowerControlInterface->StartTowerControl(NewTower);
+	}
+}
+
+void ADFPlayerPawn::EndTowerControl_Implementation()
+{
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
+	if (TowerControlInterface)
+	{
+		TowerControlInterface->EndTowerControl();
+	}
+}
+
+ADFTowerBase* ADFPlayerPawn::GetCurrentControlledTower_Implementation()
+{
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
+	if (TowerControlInterface)
+	{
+		return TowerControlInterface->GetCurrentControlledTower();
+	}
+	return nullptr;
+}
+
 UAbilitySystemComponent* ADFPlayerPawn::GetAbilitySystemComponent() const
 {
 	return ASC.Get();

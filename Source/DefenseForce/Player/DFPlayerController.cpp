@@ -14,7 +14,7 @@ ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentContr
 	bEnableMouseOverEvents = true;
 }
 
-void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
+void ADFPlayerController::StartTowerControl_Implementation(ADFTowerBase* NewTower)
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (!NewTower->IsBeingControlled())
@@ -29,7 +29,7 @@ void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 	}
 }
 
-void ADFPlayerController::EndTowerControl()
+void ADFPlayerController::EndTowerControl_Implementation()
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (CurrentControlledTower.IsValid() && CurrentControlledTower->IsBeingControlled())

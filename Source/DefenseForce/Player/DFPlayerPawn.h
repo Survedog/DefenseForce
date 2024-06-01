@@ -6,10 +6,11 @@
 #include "GameFramework/Pawn.h"
 #include "AbilitySystemInterface.h"
 #include "DefenseForce.h"
+#include "Interface/PlayerTowerControlInterface.h"
 #include "DFPlayerPawn.generated.h"
 
 UCLASS()
-class DEFENSEFORCE_API ADFPlayerPawn : public APawn, public IAbilitySystemInterface
+class DEFENSEFORCE_API ADFPlayerPawn : public APawn, public IAbilitySystemInterface, public IPlayerTowerControlInterface
 {
 	GENERATED_BODY()
 
@@ -54,6 +55,10 @@ public:
 
 protected:	
 	virtual void OnRep_Controller() override;
+
+	virtual void StartTowerControl_Implementation(class ADFTowerBase* NewTower) override;
+	virtual void EndTowerControl_Implementation() override;
+	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTowerControlStartCallback(class ADFTowerBase* NewControlledTower);

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Interface/PlayerTowerControlInterface.h"
 #include "DFPlayerController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlStartDelegate, ADFTowerBase*, NewControlledTower);
@@ -13,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlEndDelegate, ADFTower
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API ADFPlayerController : public APlayerController
+class DEFENSEFORCE_API ADFPlayerController : public APlayerController, public IPlayerTowerControlInterface
 {
 	GENERATED_BODY()
 	
@@ -35,13 +36,9 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	friend class GA_TowerControl;
-
-	UFUNCTION(BlueprintCallable)
-	void StartTowerControl(class ADFTowerBase* NewTower);
-
-	UFUNCTION(BlueprintCallable)
-	void EndTowerControl();
+	virtual void StartTowerControl_Implementation(class ADFTowerBase* NewTower) override;
+	virtual void EndTowerControl_Implementation() override;
+	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() override { return CurrentControlledTower.Get(); }
 
 	UFUNCTION()
 	void OnRep_CurrentControlledTower();
