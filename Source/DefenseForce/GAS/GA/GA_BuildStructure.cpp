@@ -16,23 +16,23 @@
 //	EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 //}
 
-UGA_BuildStructure::UGA_BuildStructure() : DFActorPlacementTA(nullptr)
+UGA_BuildStructure::UGA_BuildStructure() : PlacedStructureClass(nullptr), DFActorPlacementTA(nullptr)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
-
-	static ConstructorHelpers::FClassFinder<AGAWorldReticle_ActorVisualization> ReticleClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/TA/ReticleActor/BP_GAWorldReticle_ActorVisualization.BP_GAWorldReticle_ActorVisualization_C"));
-	if (ReticleClassRef.Class)
-	{
-		ActorVisualReticleClass = ReticleClassRef.Class;
-	}
 
 	static ConstructorHelpers::FClassFinder<ADFGATA_ActorPlacement> TargetActorClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/TA/BP_DFGATA_ActorPlacement.BP_DFGATA_ActorPlacement_C"));
 	if (TargetActorClassRef.Class)
 	{
 		ActorPlacementTAClass = TargetActorClassRef.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<AGAWorldReticle_ActorVisualization> ReticleClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/TA/ReticleActor/BP_GAWorldReticle_ActorVisualization.BP_GAWorldReticle_ActorVisualization_C"));
+	if (ReticleClassRef.Class)
+	{
+		ActorVisualReticleClass = ReticleClassRef.Class;
+	}	
 }
 
 void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -43,18 +43,19 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	
 	if (!DFActorPlacementTA)
 	{
-		DF_NETGASLOG(LogDFGAS, Log, TEXT("Spawning target actor."));
+		DF_NETGASLOG(LogDFGAS, Log, TEXT("Spawning target actor."));		
 		DFActorPlacementTA = GetWorld()->SpawnActor<ADFGATA_ActorPlacement>(ActorPlacementTAClass, FTransform::Identity);
 		DFActorPlacementTA->TraceProfile = FCollisionProfileName(TEXT("BlockOnlyWorld"));
 		DFActorPlacementTA->bIgnoreBlockingHits = false;
 		DFActorPlacementTA->bTraceStartsFromPlayerCamera = true;
 		DFActorPlacementTA->bTraceTowardMouseAimLocation = true;
-		DFActorPlacementTA->SetPlacedActorClass(PlacedStructureClass.Get());
+		DFActorPlacementTA->ReticleClass = ActorVisualReticleClass;
+	}
 
-		if (ActorVisualReticleClass)
-		{
-			DFActorPlacementTA->ReticleClass = ActorVisualReticleClass;
-		}
+	PlacedStructureClass = TriggerEventData->OptionalObject->GetClass();
+	if (PlacedStructureClass != DFActorPlacementTA->GetPlacedActorClass())
+	{
+		DFActorPlacementTA->SetPlacedActorClass(PlacedStructureClass);		
 	}
 
 	if (DFActorPlacementTA)
@@ -80,6 +81,7 @@ void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+	PlacedStructureClass = nullptr;
 }
 
 void UGA_BuildStructure::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)

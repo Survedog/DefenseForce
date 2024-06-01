@@ -19,15 +19,28 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	void InitializeVisualizationInformation(TSubclassOf<AActor> PlacedActorClass, UMaterialInterface* VisualizationMaterial);
+	void InitializeVisualizationInformation(TSubclassOf<AActor> InPlacedActorClass, UMaterialInterface* InVisualizationMaterial);
 
 	/** Returns CollisionComponent subobject **/
 	class UCapsuleComponent* GetCollisionComponent() const { return CollisionComponent; }
 
 protected:
+	void AttachMeshComponents(TSubclassOf<AActor> InPlacedActorClass, UMaterialInterface* InVisualizationMaterial);
+	void DestroyMeshComponents();
+
+protected:
 	/** Should it keep rotating to face owner? Tick function must be enabled to use this functionality. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
 	uint8 bShouldFaceOwner : 1;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Targeting")
+	TSubclassOf<AActor> CurrentPlacedActorClass;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Targeting")
+	TObjectPtr<UMaterialInterface> CurrentVisualizationMaterial;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Targeting")
+	TArray<TObjectPtr<UMeshComponent>> MeshComps;
 
 private:
 	/** Hardcoded collision component, so other objects don't think they can collide with the visualization actor */
