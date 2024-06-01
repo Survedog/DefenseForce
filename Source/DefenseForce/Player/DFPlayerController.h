@@ -39,6 +39,7 @@ protected:
 	virtual void StartTowerControl_Implementation(class ADFTowerBase* NewTower) override;
 	virtual void EndTowerControl_Implementation() override;
 	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() const override { return CurrentControlledTower.Get(); }
+	virtual class ADFStructureBase* GetCurrentStructureUnderCursor_Implementation() const override { return CurrentStructureUnderCursor.Get(); }
 
 	UFUNCTION()
 	void OnRep_CurrentControlledTower();
@@ -58,5 +59,5 @@ protected:
 	TWeakObjectPtr<class ADFStructureBase> CurrentStructureUnderCursor;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentControlledTower, Category = "Control")
-	TWeakObjectPtr<class ADFTowerBase> CurrentControlledTower;
+	TObjectPtr<class ADFTowerBase> CurrentControlledTower;
 };

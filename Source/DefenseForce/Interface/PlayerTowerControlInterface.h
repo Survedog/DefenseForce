@@ -30,4 +30,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	class ADFTowerBase* GetCurrentControlledTower() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	class ADFStructureBase* GetCurrentStructureUnderCursor() const;
 };

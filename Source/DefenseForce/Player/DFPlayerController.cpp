@@ -8,7 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include "DFLog.h"
 
-ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentControlledTower(nullptr)
+ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentStructureUnderCursor(nullptr), CurrentControlledTower(nullptr)
 {
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
@@ -19,7 +19,7 @@ void ADFPlayerController::StartTowerControl_Implementation(ADFTowerBase* NewTowe
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	if (!NewTower->IsBeingControlled())
 	{
-		if (CurrentControlledTower.IsValid())
+		if (CurrentControlledTower)
 		{
 			EndTowerControl();
 		}
@@ -32,10 +32,10 @@ void ADFPlayerController::StartTowerControl_Implementation(ADFTowerBase* NewTowe
 void ADFPlayerController::EndTowerControl_Implementation()
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
-	if (CurrentControlledTower.IsValid() && CurrentControlledTower->IsBeingControlled())
+	if (CurrentControlledTower && CurrentControlledTower->IsBeingControlled())
 	{
 		CurrentControlledTower->OnControlEnd();
-		OnTowerControlEnd.Broadcast(CurrentControlledTower.Get());
+		OnTowerControlEnd.Broadcast(CurrentControlledTower);
 		CurrentControlledTower = nullptr;
 	}
 }
@@ -43,13 +43,13 @@ void ADFPlayerController::EndTowerControl_Implementation()
 void ADFPlayerController::OnRep_CurrentControlledTower()
 {
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	if (CurrentControlledTower.IsValid())
+	if (CurrentControlledTower)
 	{
-		OnTowerControlStart.Broadcast(CurrentControlledTower.Get());
+		OnTowerControlStart.Broadcast(CurrentControlledTower);
 	}
 	else
 	{
-		OnTowerControlEnd.Broadcast(CurrentControlledTower.Get());
+		OnTowerControlEnd.Broadcast(CurrentControlledTower);
 	}
 }
 

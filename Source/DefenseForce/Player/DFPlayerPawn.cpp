@@ -160,6 +160,16 @@ ADFTowerBase* ADFPlayerPawn::GetCurrentControlledTower_Implementation() const
 	return nullptr;
 }
 
+ADFStructureBase* ADFPlayerPawn::GetCurrentStructureUnderCursor_Implementation() const
+{
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
+	if (TowerControlInterface)
+	{
+		return TowerControlInterface->GetCurrentStructureUnderCursor();
+	}
+	return nullptr;
+}
+
 UAbilitySystemComponent* ADFPlayerPawn::GetAbilitySystemComponent() const
 {
 	return ASC.Get();
