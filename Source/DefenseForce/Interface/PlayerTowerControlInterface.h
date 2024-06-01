@@ -7,7 +7,7 @@
 #include "PlayerTowerControlInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType)
 class UPlayerTowerControlInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -29,5 +29,5 @@ public:
 	void EndTowerControl();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	class ADFTowerBase* GetCurrentControlledTower();
+	class ADFTowerBase* GetCurrentControlledTower() const;
 };

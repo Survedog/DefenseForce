@@ -58,7 +58,7 @@ protected:
 
 	virtual void StartTowerControl_Implementation(class ADFTowerBase* NewTower) override;
 	virtual void EndTowerControl_Implementation() override;
-	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() override;
+	virtual class ADFTowerBase* GetCurrentControlledTower_Implementation() const override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTowerControlStartCallback(class ADFTowerBase* NewControlledTower);

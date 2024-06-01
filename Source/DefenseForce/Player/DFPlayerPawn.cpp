@@ -150,7 +150,7 @@ void ADFPlayerPawn::EndTowerControl_Implementation()
 	}
 }
 
-ADFTowerBase* ADFPlayerPawn::GetCurrentControlledTower_Implementation()
+ADFTowerBase* ADFPlayerPawn::GetCurrentControlledTower_Implementation() const
 {
 	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
 	if (TowerControlInterface)
