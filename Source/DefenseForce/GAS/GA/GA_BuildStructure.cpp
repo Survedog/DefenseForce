@@ -5,6 +5,7 @@
 #include "GAS/AT/DFAT_WaitTargetData_ReusableTA.h"
 #include "GAS/TA/DFGATA_ActorPlacement.h"
 #include "GAS/TA/Reticle/GAWorldReticle_ActorVisualization.h"
+#include "Subsystem/TargetingInstanceSubsystem.h"
 #include "Structure/DFStructureBase.h"
 #include "Interface/PlayerBuildModeInterface.h"
 #include "Net/UnrealNetwork.h"
@@ -49,9 +50,9 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	if (IsLocallyControlled())
 	{
 		if (!DFActorPlacementTA)
-		{
-			DF_NETGASLOG(LogDFGAS, Log, TEXT("Spawning target actor."));
-			DFActorPlacementTA = GetWorld()->SpawnActor<ADFGATA_ActorPlacement>(ActorPlacementTAClass, FTransform::Identity);
+		{		
+			UTargetingInstanceSubsystem* TargetingInstanceSubsystem = ULocalPlayer::GetSubsystem<UTargetingInstanceSubsystem>(ActorInfo->PlayerController->GetLocalPlayer());
+			DFActorPlacementTA = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_ActorPlacement>(ActorPlacementTAClass);
 			DFActorPlacementTA->TraceProfile = FCollisionProfileName(TEXT("BlockOnlyWorld"));
 			DFActorPlacementTA->bIgnoreBlockingHits = false;
 			DFActorPlacementTA->bTraceStartsFromPlayerCamera = true;
