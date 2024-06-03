@@ -124,6 +124,17 @@ void ADFGATA_Trace::StartTargeting(UGameplayAbility* InAbility)
 	OnStartTargeting(InAbility);
 }
 
+void ADFGATA_Trace::ConfirmTargeting()
+{
+	Super::ConfirmTargeting();
+
+	SetActorTickEnabled(false);
+	if (ReticleActor.IsValid())
+	{
+		ReticleActor->SetActorHiddenInGame(true);
+	}
+}
+
 void ADFGATA_Trace::ConfirmTargetingAndContinue()
 {
 	check(ShouldProduceTargetData());
@@ -134,13 +145,6 @@ void ADFGATA_Trace::ConfirmTargetingAndContinue()
 		bDebug = false;
 		FGameplayAbilityTargetDataHandle Handle = MakeTargetData(PerformTrace(SourceActor));
 		TargetDataReadyDelegate.Broadcast(Handle);
-		SetActorTickEnabled(false);
-
-		if (ReticleActor.IsValid())
-		{
-			ReticleActor->SetActorHiddenInGame(true);
-		}
-
 		OnConfirmTargeting();
 	}
 }

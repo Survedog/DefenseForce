@@ -27,6 +27,8 @@ public:
 	
 	virtual void StartTargeting(UGameplayAbility* InAbility) override;
 
+	virtual void ConfirmTargeting() override;
+
 	virtual void ConfirmTargetingAndContinue() override;
 
 	virtual void CancelTargeting() override;
