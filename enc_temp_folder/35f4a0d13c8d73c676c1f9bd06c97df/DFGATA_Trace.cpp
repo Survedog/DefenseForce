@@ -207,24 +207,6 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 		}
 #endif // ENABLE_DRAW_DEBUG
 
-		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
-		{
-			bool bHitActor = HitResult.GetActor() != nullptr;
-			if (bHitActor)
-			{
-				LocalReticleActor->SetActorHiddenInGame(false);
-				LocalReticleActor->SetIsTargetValid(true);
-				LocalReticleActor->SetIsTargetAnActor(HitResult.GetActor() != nullptr);
-				LocalReticleActor->SetActorLocation(HitResult.Location);
-			}
-			else
-			{
-				LocalReticleActor->SetActorHiddenInGame(true);
-				LocalReticleActor->SetIsTargetValid(false);
-				LocalReticleActor->SetIsTargetAnActor(false);
-			}
-		}
-
 		SetActorLocationAndRotation(EndPoint, SourceActor->GetActorRotation());
 	}
 }
@@ -294,6 +276,24 @@ FHitResult ADFGATA_Trace::PerformTrace(AActor* InSourceActor)
 	if (!ReturnHitResult.bBlockingHit)
 	{
 		ReturnHitResult.Location = TraceEnd;
+	}
+
+	if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
+	{
+		bool bHitActor = ReturnHitResult.GetActor() != nullptr;
+		if (bHitActor)
+		{
+			LocalReticleActor->SetActorHiddenInGame(false);
+			LocalReticleActor->SetIsTargetValid(true);
+			LocalReticleActor->SetIsTargetAnActor(ReturnHitResult.GetActor() != nullptr);
+			LocalReticleActor->SetActorLocation(ReturnHitResult.Location);
+		}
+		else
+		{
+			LocalReticleActor->SetActorHiddenInGame(true);
+			LocalReticleActor->SetIsTargetValid(false);
+			LocalReticleActor->SetIsTargetAnActor(false);
+		}
 	}
 
 	// Reset the trace start so the target data uses the correct origin
