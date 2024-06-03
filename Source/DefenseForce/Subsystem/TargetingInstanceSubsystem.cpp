@@ -25,11 +25,11 @@ AGameplayAbilityTargetActor* UTargetingInstanceSubsystem::GetTargetActorFromClas
 
 void UTargetingInstanceSubsystem::Deinitialize()
 {
-	for (auto ClassInstancePair : TAClassInstanceMap)
+	for (auto TAPair : TAClassInstanceMap)
 	{
-		if (ClassInstancePair.Value)
+		if (AGameplayAbilityTargetActor* TargetActor = TAPair.Value)
 		{
-			ClassInstancePair.Value->Destroy();
+			TargetActor->Destroy();
 		}
 	}
 }
