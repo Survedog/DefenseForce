@@ -36,18 +36,13 @@ protected:
 	virtual void AcknowledgePossession(class APawn* P) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-/* PlayerTowerControlInterface */
 protected:
-	/** Only call on server. */
-	virtual void StartTowerControl(class ADFTowerBase* NewTower) override;	
-
-	/** Only call on server. */
+	/* PlayerTowerControlInterface */
+	virtual void StartTowerControl(class ADFTowerBase* NewTower) override;
 	virtual void EndTowerControl() override;
-
 	virtual class ADFTowerBase* GetCurrentControlledTower() const override { return CurrentControlledTower.Get(); }
 	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const override { return CurrentStructureUnderCursor.Get(); }
 
-protected:
 	UFUNCTION()
 	void OnRep_CurrentControlledTower();
 
