@@ -13,7 +13,7 @@ void ADFGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(ADFGameState, CurrentMoneyAmount, COND_None, REPNOTIFY_OnChanged);
+	DOREPLIFETIME(ADFGameState, CurrentMoneyAmount);
 }
 
 void ADFGameState::OnRep_CurrentMoneyAmount()
