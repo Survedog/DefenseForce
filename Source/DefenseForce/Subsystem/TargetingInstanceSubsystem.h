@@ -17,6 +17,12 @@ class DEFENSEFORCE_API UTargetingInstanceSubsystem : public ULocalPlayerSubsyste
 public:
 	class AGameplayAbilityTargetActor* GetTargetActorFromClass(TSubclassOf<class AGameplayAbilityTargetActor> InTargetActorClass);
 	class AGameplayAbilityTargetActor* GetTargetActorFromClass(TSubclassOf<class AGameplayAbilityTargetActor> InTargetActorClass) const;
+	
+	template<class T>
+	T* GetTargetActorFromClass(TSubclassOf<class AGameplayAbilityTargetActor> InTargetActorClass) { return Cast<T>(GetTargetActorFromClass(InTargetActorClass)); }
+
+	template<class T>
+	T* GetTargetActorFromClass(TSubclassOf<class AGameplayAbilityTargetActor> InTargetActorClass) const { return Cast<T>(GetTargetActorFromClass(InTargetActorClass)); }
 
 protected:
 	virtual void Deinitialize() override;
