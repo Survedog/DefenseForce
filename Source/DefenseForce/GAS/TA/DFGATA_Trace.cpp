@@ -17,6 +17,8 @@ ADFGATA_Trace::ADFGATA_Trace()
 	bIgnoreBlockingHits = false;
 	bTraceStartsFromPlayerCamera = true;
 	bTraceTowardMouseAimLocation = true;
+
+	bIsTraceHit = false;
 }
 
 void ADFGATA_Trace::LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, FName ProfileName, const FCollisionQueryParams Params)
@@ -213,12 +215,12 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
 		{
-			bool bHitActor = HitResult.GetActor() != nullptr;
-			if (bHitActor)
+			bIsTraceHit = HitResult.GetActor() != nullptr;
+			if (bIsTraceHit)
 			{
 				LocalReticleActor->SetActorHiddenInGame(false);
 				LocalReticleActor->SetIsTargetValid(true);
-				LocalReticleActor->SetIsTargetAnActor(HitResult.GetActor() != nullptr);
+				LocalReticleActor->SetIsTargetAnActor(true);
 				LocalReticleActor->SetActorLocation(HitResult.Location);
 			}
 			else

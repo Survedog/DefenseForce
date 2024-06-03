@@ -9,6 +9,7 @@
 #include "Interface/PlayerBuildModeInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Game/DFGameState.h"
+#include "AbilitySystemComponent.h"
 #include "DFLog.h"
 
 UGA_BuildStructure::UGA_BuildStructure() : TargetStructureClass(nullptr), BuiltStructure(nullptr), DFActorPlacementTA(nullptr)
@@ -66,6 +67,8 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 		if (DFActorPlacementTA)
 		{
+			GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Push(DFActorPlacementTA);
+
 			// TODO: Reuse AbilityTask
 			UDFAT_WaitTargetData_ReusableTA* WaitTargetDataTask = UDFAT_WaitTargetData_ReusableTA::WaitTargetDataUsingReusableTA(this, FName("WaitBuildTargetData"), EGameplayTargetingConfirmation::Type::UserConfirmed, DFActorPlacementTA);
 			if (WaitTargetDataTask)
@@ -86,6 +89,7 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
+	GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Remove(DFActorPlacementTA);
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

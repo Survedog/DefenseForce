@@ -30,3 +30,27 @@ void ADFGATA_ActorPlacement::StartTargeting(UGameplayAbility* InAbility)
 		}
 	}
 }
+
+void ADFGATA_ActorPlacement::ConfirmTargeting()
+{
+	if (bIsTraceHit)
+	{
+		Super::ConfirmTargeting();
+	}
+	else
+	{
+		OnTargetConfirmRejected.Broadcast();
+	}
+}
+
+void ADFGATA_ActorPlacement::ConfirmTargetingAndContinue()
+{
+	if (bIsTraceHit)
+	{
+		Super::ConfirmTargetingAndContinue();
+	}
+	else
+	{
+		OnTargetConfirmRejected.Broadcast();
+	}
+}

@@ -82,4 +82,7 @@ protected:
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Targeting")
 	TWeakObjectPtr<AGameplayAbilityWorldReticle> ReticleActor;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Targeting")
+	uint8 bIsTraceHit : 1;
 };

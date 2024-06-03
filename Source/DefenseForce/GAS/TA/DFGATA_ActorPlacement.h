@@ -6,6 +6,8 @@
 #include "GAS/TA/DFGATA_Trace.h"
 #include "DFGATA_ActorPlacement.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetConfirmRejectedDelegate);
+
 /**
  * 
  */
@@ -18,12 +20,17 @@ public:
 	ADFGATA_ActorPlacement();
 
 	virtual void StartTargeting(UGameplayAbility* InAbility) override;
+	virtual void ConfirmTargeting() override;
+	virtual void ConfirmTargetingAndContinue() override;
 
 	FORCEINLINE TSubclassOf<class AActor> GetPlacedActorClass() const { return PlacedActorClass; }
 	FORCEINLINE void SetPlacedActorClass(TSubclassOf<class AActor> InPlacedActorClass) { PlacedActorClass = InPlacedActorClass; }
 
 	FORCEINLINE UMaterialInterface* GetPlacedActorMaterial() const { return PlacedActorMaterial; }
 	FORCEINLINE void SetPlacedActorMaterial(class UMaterialInterface* InPlacedActorMaterial) { PlacedActorMaterial = InPlacedActorMaterial; }
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTargetConfirmRejectedDelegate OnTargetConfirmRejected;
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, meta = (ExposeOnSpawn = true), Category = Targeting)
