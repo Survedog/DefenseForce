@@ -10,9 +10,9 @@ AGameplayAbilityTargetActor* UTargetingInstanceSubsystem::GetTargetActorFromClas
 	AGameplayAbilityTargetActor* TargetActor = static_cast<const UTargetingInstanceSubsystem*>(this)->GetTargetActorFromClass(InTargetActorClass);
 	if (!TargetActor)
 	{
-		DF_LOG(LogDF, Log, TEXT("Spawning Target Actor..."));
 		TargetActor = GetWorld()->SpawnActor<AGameplayAbilityTargetActor>(InTargetActorClass);
 		TAClassInstanceMap.Add(InTargetActorClass, TargetActor);
+		DF_NETCUSTOMLOG(TargetActor, LogDF, Log, TEXT("Spawned Target Actor of class %s."), *InTargetActorClass->GetFName().ToString());
 	}
 	return TargetActor;
 }

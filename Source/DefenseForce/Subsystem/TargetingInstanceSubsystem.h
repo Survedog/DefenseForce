@@ -15,6 +15,7 @@ class DEFENSEFORCE_API UTargetingInstanceSubsystem : public ULocalPlayerSubsyste
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable)
 	class AGameplayAbilityTargetActor* GetTargetActorFromClass(TSubclassOf<class AGameplayAbilityTargetActor> InTargetActorClass);
 	class AGameplayAbilityTargetActor* GetTargetActorFromClass(TSubclassOf<class AGameplayAbilityTargetActor> InTargetActorClass) const;
 	
