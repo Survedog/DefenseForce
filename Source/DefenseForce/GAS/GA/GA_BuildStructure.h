@@ -36,10 +36,10 @@ protected:
 	void OnRep_BuiltStructure();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Build")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Build")
 	TSubclassOf<class ADFStructureBase> TargetStructureClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_BuiltStructure, Category = "Build")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_BuiltStructure, Category = "Build")
 	TWeakObjectPtr<class ADFStructureBase> BuiltStructure;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
