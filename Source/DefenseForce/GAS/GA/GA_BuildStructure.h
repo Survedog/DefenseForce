@@ -18,8 +18,10 @@ public:
 	UGA_BuildStructure();
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray< class FLifetimeProperty >& OutLifetimeProps) const;
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;	
 
 	UFUNCTION()
 	void OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
@@ -27,11 +29,17 @@ protected:
 	UFUNCTION()
 	void OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPCSpawnTargetStructure(TSubclassOf<class ADFStructureBase> InTargetStructureClass, const FVector_NetQuantize SpawnLocation);
+
+	UFUNCTION()
+	void OnRep_BuiltStructure();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Build")
 	TSubclassOf<class ADFStructureBase> TargetStructureClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Build")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_BuiltStructure, Category = "Build")
 	TWeakObjectPtr<class ADFStructureBase> BuiltStructure;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")

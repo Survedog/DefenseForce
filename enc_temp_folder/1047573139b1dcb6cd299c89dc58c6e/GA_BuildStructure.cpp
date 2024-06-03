@@ -84,8 +84,18 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
+	if (APawn* AvatarPawn = Cast<APawn>(ActorInfo->AvatarActor))
+	{
+		if (IPlayerBuildModeInterface* BuildModeInterface = Cast<IPlayerBuildModeInterface>(AvatarPawn->GetController()))
+		{
+			BuildModeInterface->ExitBuildMode(BuiltStructure.Get());
+		}
+	}
+	TargetStructureClass = nullptr;
+	BuiltStructure = nullptr;
 }
 
 void UGA_BuildStructure::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
@@ -119,10 +129,6 @@ void UGA_BuildStructure::ServerRPCSpawnTargetStructure_Implementation(TSubclassO
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
 	BuiltStructure = GetWorld()->SpawnActor<ADFStructureBase>(InTargetStructureClass, FTransform(SpawnLocation), SpawnParams);
-	if (IsLocallyControlled())
-	{
-		OnRep_BuiltStructure();
-	}
 }
 
 void UGA_BuildStructure::OnRep_BuiltStructure()

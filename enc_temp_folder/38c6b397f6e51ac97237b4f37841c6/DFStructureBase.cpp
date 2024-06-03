@@ -8,7 +8,6 @@
 ADFStructureBase::ADFStructureBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	bReplicates = true;
 
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
 	RootComponent = RootSceneComponent;
