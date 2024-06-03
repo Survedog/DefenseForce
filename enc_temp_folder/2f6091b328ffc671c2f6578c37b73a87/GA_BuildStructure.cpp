@@ -8,6 +8,7 @@
 #include "Structure/DFStructureBase.h"
 #include "Interface/PlayerBuildModeInterface.h"
 #include "Net/UnrealNetwork.h"
+#include "Game/DFGameState.h"
 #include "DFLog.h"
 
 UGA_BuildStructure::UGA_BuildStructure() : TargetStructureClass(nullptr), BuiltStructure(nullptr), DFActorPlacementTA(nullptr)
@@ -33,7 +34,7 @@ void UGA_BuildStructure::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UGA_BuildStructure, BuiltStructure, COND_OwnerOnly, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGA_BuildStructure, BuiltStructure, COND_OwnerOnly, REPNOTIFY_OnChanged);
 }
 
 void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -84,18 +85,8 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 void UGA_BuildStructure::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
-	if (APawn* AvatarPawn = Cast<APawn>(ActorInfo->AvatarActor))
-	{
-		if (IPlayerBuildModeInterface* BuildModeInterface = Cast<IPlayerBuildModeInterface>(AvatarPawn->GetController()))
-		{
-			BuildModeInterface->ExitBuildMode(BuiltStructure.Get());
-		}
-	}
-	TargetStructureClass = nullptr;
-	BuiltStructure = nullptr;
 }
 
 void UGA_BuildStructure::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
@@ -126,9 +117,18 @@ void UGA_BuildStructure::OnTargetDataCancelledCallback(const FGameplayAbilityTar
 void UGA_BuildStructure::ServerRPCSpawnTargetStructure_Implementation(TSubclassOf<class ADFStructureBase> InTargetStructureClass, const FVector_NetQuantize SpawnLocation)
 {
 	DF_NETGASLOG(LogDFNET, Log, TEXT("Start"));
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
 	BuiltStructure = GetWorld()->SpawnActor<ADFStructureBase>(InTargetStructureClass, FTransform(SpawnLocation), SpawnParams);
+
+	ADFGameState* DFGameState = CastChecked<ADFGameState>(GetWorld()->GetGameState());
+	DFGameState->SpendMoney(BuiltStructure->GetBuildCost());
+
+	if (IsLocallyControlled())
+	{
+		OnRep_BuiltStructure();
+	}	
 }
 
 void UGA_BuildStructure::OnRep_BuiltStructure()

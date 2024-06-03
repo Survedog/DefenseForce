@@ -8,6 +8,7 @@
 #include "Structure/DFStructureBase.h"
 #include "Interface/PlayerBuildModeInterface.h"
 #include "Net/UnrealNetwork.h"
+#include "Game/DFGameState.h"
 #include "DFLog.h"
 
 UGA_BuildStructure::UGA_BuildStructure() : TargetStructureClass(nullptr), BuiltStructure(nullptr), DFActorPlacementTA(nullptr)
@@ -116,9 +117,14 @@ void UGA_BuildStructure::OnTargetDataCancelledCallback(const FGameplayAbilityTar
 void UGA_BuildStructure::ServerRPCSpawnTargetStructure_Implementation(TSubclassOf<class ADFStructureBase> InTargetStructureClass, const FVector_NetQuantize SpawnLocation)
 {
 	DF_NETGASLOG(LogDFNET, Log, TEXT("Start"));
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
 	BuiltStructure = GetWorld()->SpawnActor<ADFStructureBase>(InTargetStructureClass, FTransform(SpawnLocation), SpawnParams);
+
+	ADFGameState* DFGameState = CastChecked<ADFGameState>(GetWorld()->GetGameState());
+	DFGameState->SpendMoney(BuiltStructure->GetBuildCost());
+
 	if (IsLocallyControlled())
 	{
 		OnRep_BuiltStructure();
