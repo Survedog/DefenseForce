@@ -7,7 +7,9 @@
 #include "DFGATA_Trace.generated.h"
 
 /**
- *  Custom version of AGameplayAbilityTargetActor_Trace.
+ *  Custom reusable version of AGameplayAbilityTargetActor_Trace.
+ *  This target actor reuses reticle actor, avoiding duplicate spawning of it.
+ *  Meant to be used with AbilityTask DFAT_WaitTargetData_ReusableTA.
  */
 UCLASS()
 class DEFENSEFORCE_API ADFGATA_Trace : public AGameplayAbilityTargetActor

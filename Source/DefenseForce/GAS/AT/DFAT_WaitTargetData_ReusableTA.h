@@ -10,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitTargetDataDelegate, const FGame
 
 /**
  * Wait for targeting actor (spawned from parameter) to provide data. Can be set not to end upon outputting data. Can be ended by task name.
+ * Meant to be used with DFGATA_Trace, which is designed to be able to be reused.
  */
 UCLASS()
 class DEFENSEFORCE_API UDFAT_WaitTargetData_ReusableTA : public UAbilityTask
