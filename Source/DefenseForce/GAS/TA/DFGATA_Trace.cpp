@@ -142,7 +142,7 @@ void ADFGATA_Trace::ConfirmTargetingAndContinue()
 
 	if (SourceActor && IsConfirmTargetingAllowed())
 	{
-		bDebug = false;
+		//bDebug = false;
 		FGameplayAbilityTargetDataHandle Handle = MakeTargetData(PerformTrace(SourceActor));
 		TargetDataReadyDelegate.Broadcast(Handle);
 		OnConfirmTargeting();
