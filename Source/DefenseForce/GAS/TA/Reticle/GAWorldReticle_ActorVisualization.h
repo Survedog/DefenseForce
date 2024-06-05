@@ -3,21 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbilityWorldReticle.h"
+#include "GAS/TA/Reticle/DFGAWorldReticle.h"
 #include "GAWorldReticle_ActorVisualization.generated.h"
 
 /**
  * Custom class of AGameplayAbilityWorldReticle_ActorVisualization.
  */
 UCLASS(NotPlaceable)
-class DEFENSEFORCE_API AGAWorldReticle_ActorVisualization : public AGameplayAbilityWorldReticle
+class DEFENSEFORCE_API AGAWorldReticle_ActorVisualization : public ADFGAWorldReticle
 {
 	GENERATED_BODY()
 
 public:
 	AGAWorldReticle_ActorVisualization(const FObjectInitializer& ObjectInitializer);
-
-	virtual void Tick(float DeltaSeconds) override;
 
 	void InitializeVisualizationInformation(TSubclassOf<AActor> InPlacedActorClass, UMaterialInterface* InVisualizationMaterial);
 
@@ -29,10 +27,6 @@ protected:
 	void DestroyMeshComponents();
 
 protected:
-	/** Should it keep rotating to face owner? Tick function must be enabled to use this functionality. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
-	uint8 bShouldFaceOwner : 1;
-
 	UPROPERTY(VisibleInstanceOnly, Category = "Targeting")
 	TSubclassOf<AActor> CurrentPlacedActorClass;
 

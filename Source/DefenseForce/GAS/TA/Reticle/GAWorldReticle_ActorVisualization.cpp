@@ -9,10 +9,6 @@
 AGAWorldReticle_ActorVisualization::AGAWorldReticle_ActorVisualization(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer), CurrentPlacedActorClass(nullptr), CurrentVisualizationMaterial(nullptr)
 {
-	bShouldFaceOwner = false;	
-	bAllowTickBeforeBeginPlay = false;
-	PrimaryActorTick.bStartWithTickEnabled = false;
-
 	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionCapsule0"));
 	CollisionComponent->InitCapsuleSize(0.f, 0.f);
 	CollisionComponent->AlwaysLoadOnClient = true;
@@ -23,17 +19,6 @@ AGAWorldReticle_ActorVisualization::AGAWorldReticle_ActorVisualization(const FOb
 
 	RootComponent = CollisionComponent;
 }
-
-void AGAWorldReticle_ActorVisualization::Tick(float DeltaSeconds)
-{
-	AActor::Tick(DeltaSeconds);
-
-	if (bShouldFaceOwner)
-	{
-		FaceTowardSource(bFaceOwnerFlat);
-	}
-}
-
 
 void AGAWorldReticle_ActorVisualization::InitializeVisualizationInformation(TSubclassOf<AActor> InPlacedActorClass, UMaterialInterface* InVisualizationMaterial)
 {
