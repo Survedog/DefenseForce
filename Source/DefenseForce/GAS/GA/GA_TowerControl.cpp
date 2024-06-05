@@ -26,6 +26,7 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	{
 		if (DFTargetActor = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_Trace>(*TowerToControl->GetTargetActorClass()))
 		{
+			DFTargetActor->SetOwner(TowerToControl);
 			DFTargetActor->TraceProfile = FCollisionProfileName(TEXT("BlockOnlyWorld"));
 			DFTargetActor->bIgnoreBlockingHits = false;
 			DFTargetActor->bTraceStartsFromPlayerCamera = true;
@@ -35,7 +36,6 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (DFTargetActor)
 	{		
-		DFTargetActor->SourceActor = TowerToControl;
 		DFTargetActor->ReticleClass = TowerToControl->GetReticleClass();
 		GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Push(DFTargetActor);
 
@@ -58,6 +58,7 @@ void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
 	GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Remove(DFTargetActor);
+	DFTargetActor->SetOwner(nullptr);
 	DFTargetActor = nullptr;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
