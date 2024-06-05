@@ -29,6 +29,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnControlEnd();
 
+	FORCEINLINE TSubclassOf<class ADFGATA_Trace> GetTargetActorClass() const { return TargetActorClass; }
+	FORCEINLINE TSubclassOf<class AGameplayAbilityWorldReticle> GetReticleClass() const { return ReticleClass; }
+	FORCEINLINE bool ShouldConfirmTargetOnInputPressed() const { return bConfirmTargetOnInputPressed; }
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -38,6 +42,15 @@ protected:
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_ControllingPlayerPawn, Category = "Player Control")
 	TWeakObjectPtr<class ADFPlayerPawn> ControllingPlayerPawn;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
+	TSubclassOf<class ADFGATA_Trace> TargetActorClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
+	TSubclassOf<class AGameplayAbilityWorldReticle> ReticleClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
+	uint8 bConfirmTargetOnInputPressed : 1;
 
 private:
 	UPROPERTY(VisibleInstanceOnly, Category = "Player Control")

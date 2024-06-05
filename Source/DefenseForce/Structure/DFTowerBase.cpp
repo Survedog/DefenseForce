@@ -4,6 +4,7 @@
 #include "Structure/DFTowerBase.h"
 #include "Player/DFPlayerPawn.h"
 #include "Net/UnrealNetwork.h"
+#include "GAS/TA/DFGATA_Trace.h"
 #include "DFLog.h"
 
 ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
@@ -11,6 +12,19 @@ ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
 	PrimaryActorTick.bCanEverTick = true;
 	
 	bIsBeingControlled = false;
+	bConfirmTargetOnInputPressed = true;
+
+	static ConstructorHelpers::FClassFinder<ADFGATA_Trace> TargetActorClassRef(TEXT("/Script/CoreUObject.Class'/Script/DefenseForce.DFGATA_Trace'"));
+	if (TargetActorClassRef.Class)
+	{
+		TargetActorClass = TargetActorClassRef.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<AGameplayAbilityWorldReticle> ReticleClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/TA/ReticleActor/BP_GAWorldReticle_AimArrow.BP_GAWorldReticle_AimArrow_C"));
+	if (ReticleClassRef.Class)
+	{
+		ReticleClass = ReticleClassRef.Class;
+	}
 }
 
 bool ADFTowerBase::IsLocallyControlled() const
