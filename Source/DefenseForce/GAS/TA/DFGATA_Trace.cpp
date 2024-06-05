@@ -103,7 +103,9 @@ void ADFGATA_Trace::StartTargeting(UGameplayAbility* InAbility)
 			{
 				ReticleActor->Destroy();
 			}
-			SpawnedReticleActor = GetWorld()->SpawnActor<AGameplayAbilityWorldReticle>(ReticleClass, GetActorLocation(), GetActorRotation());
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnedReticleActor = GetWorld()->SpawnActor<AGameplayAbilityWorldReticle>(ReticleClass, GetActorLocation(), GetActorRotation(), SpawnParams);
 		}
 
 		if (SpawnedReticleActor)
