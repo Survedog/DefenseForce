@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "AbilitySystemLog.h"
+#include "GAS/TA/Reticle/DFGAWorldReticle.h" 
 #include "DFLog.h"
 
 ADFGATA_Trace::ADFGATA_Trace()
@@ -223,7 +224,15 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 				LocalReticleActor->SetActorHiddenInGame(false);
 				LocalReticleActor->SetIsTargetValid(true);
 				LocalReticleActor->SetIsTargetAnActor(true);
-				LocalReticleActor->SetActorLocation(HitResult.Location);
+
+				if (ADFGAWorldReticle* DFReticleActor = Cast<ADFGAWorldReticle>(LocalReticleActor))
+				{
+					DFReticleActor->OnTraceResultSet(HitResult);
+				}
+				else
+				{
+					LocalReticleActor->SetActorLocation(HitResult.Location);
+				}
 			}
 			else
 			{
@@ -290,8 +299,6 @@ FHitResult ADFGATA_Trace::PerformTrace(AActor* InSourceActor)
 			TraceEnd = PlayerViewLocation + PlayerViewRotation.Vector() * MaxRange;
 		}
 	}
-
-	//AimWithPlayerController(InSourceActor, Params, TraceStart, TraceEnd);		//Effective on server and launching client only
 
 	// ------------------------------------------------------
 

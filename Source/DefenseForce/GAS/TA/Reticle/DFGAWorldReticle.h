@@ -17,6 +17,9 @@ class DEFENSEFORCE_API ADFGAWorldReticle : public AGameplayAbilityWorldReticle
 public: 
 	ADFGAWorldReticle(const FObjectInitializer& ObjectInitializer);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnTraceResultSet(const FHitResult& HitResult);
+
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 
