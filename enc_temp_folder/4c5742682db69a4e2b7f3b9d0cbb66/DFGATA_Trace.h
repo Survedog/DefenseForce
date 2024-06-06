@@ -6,13 +6,6 @@
 #include "Abilities/GameplayAbilityTargetActor.h"
 #include "DFGATA_Trace.generated.h"
 
-UENUM(BlueprintType)
-enum class ETargetActorCollisionFilterMethod : uint8
-{
-	CollisionProfile,
-	CollisionChannel
-};
-
 /**
  *  Custom reusable version of AGameplayAbilityTargetActor_Trace.
  *  This target actor reuses reticle actor, avoiding duplicate spawning of it.
@@ -28,7 +21,6 @@ public:
 
 	/** Traces as normal, but will manually filter all hit actors */
 	static void LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, FName ProfileName, const FCollisionQueryParams Params);
-	static void LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, ECollisionChannel CollisionChannel, const FCollisionQueryParams Params);
 
 	/** Sweeps as normal, but will manually filter all hit actors */
 	static void SweepWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, const FQuat& Rotation, const FCollisionShape CollisionShape, FName ProfileName, const FCollisionQueryParams Params);
@@ -51,10 +43,6 @@ public:
 
 	virtual void StopTargeting();
 
-	FORCEINLINE void SetTraceProfile(FName InProfileName) { TraceProfile = FCollisionProfileName(InProfileName); CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionProfile; }
-	FORCEINLINE void SetTraceChannel(ECollisionChannel InCollisionChannel) { TraceChannel = InCollisionChannel; CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionChannel; }
-	FORCEINLINE void SetCollisionFilterMethod(ETargetActorCollisionFilterMethod InCollisionFilterMethod) { CollisionFilterMethod = InCollisionFilterMethod; }
-
 	UFUNCTION(BlueprintNativeEvent)
 	void OnStartTargeting(UGameplayAbility* InAbility);
 
@@ -76,6 +64,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	float MaxRange;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
+	FCollisionProfileName TraceProfile;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	bool bIgnoreBlockingHits;
 
@@ -91,15 +82,6 @@ protected:
 	FGameplayAbilityTargetDataHandle MakeTargetData(const FHitResult& HitResult) const;
 
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
-	FCollisionProfileName TraceProfile;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
-	TEnumAsByte<ECollisionChannel> TraceChannel;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
-	ETargetActorCollisionFilterMethod CollisionFilterMethod;
-
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Targeting")
 	TWeakObjectPtr<AGameplayAbilityWorldReticle> ReticleActor;
 

@@ -53,7 +53,7 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		{		
 			UTargetingInstanceSubsystem* TargetingInstanceSubsystem = ULocalPlayer::GetSubsystem<UTargetingInstanceSubsystem>(ActorInfo->PlayerController->GetLocalPlayer());
 			DFActorPlacementTA = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_ActorPlacement>(ActorPlacementTAClass);
-			DFActorPlacementTA->SetTraceProfile(TEXT("BlockOnlyWorld"));
+			DFActorPlacementTA->TraceProfile = FCollisionProfileName(TEXT("BlockOnlyWorld"));
 			DFActorPlacementTA->bIgnoreBlockingHits = false;
 			DFActorPlacementTA->bTraceStartsFromPlayerCamera = true;
 			DFActorPlacementTA->bTraceTowardMouseAimLocation = true;

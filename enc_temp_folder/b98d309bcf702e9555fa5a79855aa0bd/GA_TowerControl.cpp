@@ -32,7 +32,7 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		if (DFTargetActor = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_Trace>(*TowerToControl->GetTargetActorClass()))
 		{
 			DFTargetActor->SetOwner(TowerToControl);
-			DFTargetActor->SetTraceProfile(TEXT("BlockOnlyWorld"));
+			DFTargetActor->TraceProfile = FCollisionProfileName(TEXT("BlockOnlyWorld"));
 			DFTargetActor->bIgnoreBlockingHits = false;
 			DFTargetActor->bTraceStartsFromPlayerCamera = true;
 			DFTargetActor->bTraceTowardMouseAimLocation = true;

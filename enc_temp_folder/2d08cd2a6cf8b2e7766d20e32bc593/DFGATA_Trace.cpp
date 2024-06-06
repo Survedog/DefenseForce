@@ -19,7 +19,6 @@ ADFGATA_Trace::ADFGATA_Trace()
 	bTraceStartsFromPlayerCamera = true;
 	bTraceTowardMouseAimLocation = true;
 
-	CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionProfile;
 	bIsTraceHit = false;
 }
 
@@ -29,27 +28,6 @@ void ADFGATA_Trace::LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* 
 
 	TArray<FHitResult> HitResults;
 	World->LineTraceMultiByProfile(HitResults, Start, End, ProfileName, Params);
-
-	OutHitResult.TraceStart = Start;
-	OutHitResult.TraceEnd = End;
-
-	for (const FHitResult& Hit : HitResults)
-	{
-		if (!Hit.HitObjectHandle.IsValid() || FilterHandle.FilterPassesForActor(Hit.HitObjectHandle.FetchActor()))
-		{
-			OutHitResult = Hit;
-			OutHitResult.bBlockingHit = true; // treat it as a blocking hit
-			return;
-		}
-	}
-}
-
-void ADFGATA_Trace::LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, ECollisionChannel CollisionChannel, const FCollisionQueryParams Params)
-{
-	check(World);
-
-	TArray<FHitResult> HitResults;
-	World->LineTraceMultiByChannel(HitResults, Start, End, CollisionChannel, Params);
 
 	OutHitResult.TraceStart = Start;
 	OutHitResult.TraceEnd = End;
@@ -331,15 +309,7 @@ FHitResult ADFGATA_Trace::PerformTrace(AActor* InSourceActor)
 
 	FHitResult ReturnHitResult;
 	//Use a line trace initially to see where the player is actually pointing
-	if (CollisionFilterMethod == ETargetActorCollisionFilterMethod::CollisionProfile)
-	{
-		LineTraceWithFilter(ReturnHitResult, InSourceActor->GetWorld(), Filter, TraceStart, TraceEnd, TraceProfile.Name, Params);
-	}
-	else
-	{
-		LineTraceWithFilter(ReturnHitResult, InSourceActor->GetWorld(), Filter, TraceStart, TraceEnd, TraceChannel, Params);
-	}
-
+	LineTraceWithFilter(ReturnHitResult, InSourceActor->GetWorld(), Filter, TraceStart, TraceEnd, TraceProfile.Name, Params);
 	//Default to end of trace line if we don't hit anything.
 	if (!ReturnHitResult.bBlockingHit)
 	{
