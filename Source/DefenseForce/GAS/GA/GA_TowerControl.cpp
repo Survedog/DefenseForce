@@ -8,6 +8,7 @@
 #include "AbilitySystemComponent.h"
 #include "Interface/PlayerTowerControlInterface.h"
 #include "Structure/DFTowerBase.h"
+#include "Physics/DFCollision.h"
 #include "DFLog.h"
 
 void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -32,7 +33,7 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		if (DFTargetActor = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_Trace>(*TowerToControl->GetTargetActorClass()))
 		{
 			DFTargetActor->SetOwner(TowerToControl);
-			DFTargetActor->SetTraceProfile(TEXT("BlockOnlyWorld"));
+			DFTargetActor->SetTraceChannel(CCHANNEL_PlayerAim);
 			DFTargetActor->bIgnoreBlockingHits = false;
 			DFTargetActor->bTraceStartsFromPlayerCamera = true;
 			DFTargetActor->bTraceTowardMouseAimLocation = true;

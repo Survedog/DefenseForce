@@ -11,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Game/DFGameState.h"
 #include "AbilitySystemComponent.h"
+#include "Physics/DFCollision.h"
 #include "DFLog.h"
 
 UGA_BuildStructure::UGA_BuildStructure() : TargetStructureClass(nullptr), BuiltStructure(nullptr), DFActorPlacementTA(nullptr)
@@ -53,7 +54,7 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		{		
 			UTargetingInstanceSubsystem* TargetingInstanceSubsystem = ULocalPlayer::GetSubsystem<UTargetingInstanceSubsystem>(ActorInfo->PlayerController->GetLocalPlayer());
 			DFActorPlacementTA = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_ActorPlacement>(ActorPlacementTAClass);
-			DFActorPlacementTA->SetTraceProfile(TEXT("BlockOnlyWorld"));
+			DFActorPlacementTA->SetTraceProfile(CPROFILE_BlockOnlyWorld);
 			DFActorPlacementTA->bIgnoreBlockingHits = false;
 			DFActorPlacementTA->bTraceStartsFromPlayerCamera = true;
 			DFActorPlacementTA->bTraceTowardMouseAimLocation = true;
