@@ -41,6 +41,16 @@ void ADFPlayerController::EndTowerControl()
 	}
 }
 
+FVector ADFPlayerController::GetPlayerAimLocation() const
+{
+	return DFPlayerPawn->GetPlayerAimLocation();
+}
+
+void ADFPlayerController::SetPlayerAimLocation(const FVector& InPlayerAimLocation)
+{
+	DFPlayerPawn->SetPlayerAimLocation(InPlayerAimLocation);
+}
+
 void ADFPlayerController::OnRep_CurrentControlledTower()
 {
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));

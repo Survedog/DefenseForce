@@ -47,8 +47,8 @@ protected:
 	virtual class ADFTowerBase* GetCurrentControlledTower() const override { return CurrentControlledTower.Get(); }
 	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const override { return CurrentStructureUnderCursor.Get(); }
 
-	virtual FVector GetPlayerAimLocation() const override { return DFPlayerPawn->GetPlayerAimLocation(); }
-	virtual void SetPlayerAimLocation(const FVector& InPlayerAimLocation) override { DFPlayerPawn->SetPlayerAimLocation(InPlayerAimLocation); }
+	virtual FVector GetPlayerAimLocation() const override;
+	virtual void SetPlayerAimLocation(const FVector& InPlayerAimLocation) override;
 
 protected:
 	UFUNCTION()
