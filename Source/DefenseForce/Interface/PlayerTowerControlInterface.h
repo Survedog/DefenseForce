@@ -33,4 +33,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const = 0;
+
+	UFUNCTION(BlueprintCallable)
+	virtual FVector GetPlayerAimLocation() const = 0;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetPlayerAimLocation(const FVector& InPlayerAimLocation) = 0;
 };

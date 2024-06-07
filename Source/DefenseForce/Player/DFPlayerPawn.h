@@ -52,6 +52,8 @@ protected:
 // Player Control
 public:
 	class ADFPlayerController* GetDFPlayerController() const { return DFPlayerController.Get(); }
+	virtual FVector GetPlayerAimLocation() const override { return PlayerAimLocation; }
+	virtual void SetPlayerAimLocation(const FVector& InPlayerAimLocation) override { PlayerAimLocation = InPlayerAimLocation; }
 
 protected:	
 	virtual void OnRep_Controller() override;
