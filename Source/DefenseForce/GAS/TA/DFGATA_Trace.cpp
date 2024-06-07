@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "AbilitySystemLog.h"
 #include "GAS/TA/Reticle/DFGAWorldReticle.h" 
+#include "Interface/PlayerTowerControlInterface.h"
 #include "DFLog.h"
 
 ADFGATA_Trace::ADFGATA_Trace()
@@ -240,8 +241,7 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
 		{
-			bIsTraceHit = HitResult.GetActor() != nullptr;
-			if (bIsTraceHit)
+			if (HitResult.bBlockingHit)
 			{
 				LocalReticleActor->SetActorHiddenInGame(false);
 				LocalReticleActor->SetIsTargetValid(true);
@@ -262,6 +262,11 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 				LocalReticleActor->SetIsTargetValid(false);
 				LocalReticleActor->SetIsTargetAnActor(false);
 			}
+		}
+		
+		if (IPlayerTowerControlInterface* PlayerTowerControlInterface = Cast<IPlayerTowerControlInterface>(SourceActor))
+		{
+			PlayerTowerControlInterface->SetPlayerAimLocation(HitResult.bBlockingHit ? HitResult.Location : HitResult.TraceEnd);
 		}
 
 		SetActorLocationAndRotation(EndPoint, SourceActor->GetActorRotation());
