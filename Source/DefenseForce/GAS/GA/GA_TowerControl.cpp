@@ -9,6 +9,7 @@
 #include "Interface/PlayerTowerControlInterface.h"
 #include "Structure/DFTowerBase.h"
 #include "Physics/DFCollision.h"
+#include "DefenseForce.h"
 #include "DFLog.h"
 
 void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -89,5 +90,17 @@ void UGA_TowerControl::OnTargetDataReadyCallback_Implementation(const FGameplayA
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
 	FGameplayEventData Payload;
 	Payload.TargetData = TargetDataHandle;
-	GetAbilitySystemComponentFromActorInfo()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack")), &Payload);
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
+	if (!ASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack"))))
+	{
+		SendGameplayEvent(FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack")), Payload);
+	}
+	else
+	{
+		FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(EDFAbilityInputID::Attack));
+		if (Spec)
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
+	}
 }
