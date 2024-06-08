@@ -171,7 +171,8 @@ void ADFGATA_Trace::ConfirmTargetingAndContinue()
 	if (SourceActor && IsConfirmTargetingAllowed())
 	{
 		//bDebug = false;
-		FGameplayAbilityTargetDataHandle Handle = MakeTargetData(PerformTrace(SourceActor));
+		//FGameplayAbilityTargetDataHandle Handle = MakeTargetData(PerformTrace(SourceActor));
+		FGameplayAbilityTargetDataHandle Handle = MakeTargetData(TraceHitResult);
 		TargetDataReadyDelegate.Broadcast(Handle);
 		OnConfirmTargeting();
 	}
@@ -228,8 +229,8 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 	// very temp - do a mostly hardcoded trace from the source actor
 	if (SourceActor && SourceActor->GetLocalRole() != ENetRole::ROLE_SimulatedProxy)
 	{
-		FHitResult HitResult = PerformTrace(SourceActor);
-		FVector EndPoint = HitResult.Component.IsValid() ? HitResult.ImpactPoint : HitResult.TraceEnd;
+		TraceHitResult = PerformTrace(SourceActor);
+		FVector EndPoint = TraceHitResult.Component.IsValid() ? TraceHitResult.ImpactPoint : TraceHitResult.TraceEnd;
 
 #if ENABLE_DRAW_DEBUG
 		if (bDebug)
@@ -241,7 +242,7 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
 		{
-			if (HitResult.bBlockingHit)
+			if (TraceHitResult.bBlockingHit)
 			{
 				LocalReticleActor->SetActorHiddenInGame(false);
 				LocalReticleActor->SetIsTargetValid(true);
@@ -249,11 +250,11 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 				if (ADFGAWorldReticle* DFReticleActor = Cast<ADFGAWorldReticle>(LocalReticleActor))
 				{
-					DFReticleActor->OnTraceResultSet(HitResult);
+					DFReticleActor->OnTraceResultSet(TraceHitResult);
 				}
 				else
 				{
-					LocalReticleActor->SetActorLocation(HitResult.Location);
+					LocalReticleActor->SetActorLocation(TraceHitResult.Location);
 				}
 			}
 			else
@@ -266,7 +267,7 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 		
 		if (IPlayerTowerControlInterface* PlayerTowerControlInterface = Cast<IPlayerTowerControlInterface>(SourceActor))
 		{
-			PlayerTowerControlInterface->SetPlayerAimLocation(HitResult.bBlockingHit ? HitResult.Location : HitResult.TraceEnd);
+			PlayerTowerControlInterface->SetPlayerAimLocation(EndPoint);
 		}
 
 		SetActorLocationAndRotation(EndPoint, SourceActor->GetActorRotation());

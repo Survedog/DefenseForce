@@ -95,10 +95,13 @@ protected:
 	FCollisionProfileName TraceProfile;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
-	TEnumAsByte<ECollisionChannel> TraceChannel;
+	TEnumAsByte<ECollisionChannel> TraceChannel;	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	ETargetActorCollisionFilterMethod CollisionFilterMethod;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Trace")
+	FHitResult TraceHitResult;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Targeting")
 	TWeakObjectPtr<AGameplayAbilityWorldReticle> ReticleActor;
