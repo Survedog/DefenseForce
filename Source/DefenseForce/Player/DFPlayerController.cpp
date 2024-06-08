@@ -25,6 +25,7 @@ void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 			EndTowerControl();
 		}
 		CurrentControlledTower = NewTower;
+		CurrentControlledTower->SetOwner(this);
 		CurrentControlledTower->OnControlStart(DFPlayerPawn);
 		OnTowerControlStart.Broadcast(NewTower);
 	}
@@ -36,6 +37,7 @@ void ADFPlayerController::EndTowerControl()
 	if (CurrentControlledTower && CurrentControlledTower->IsBeingControlled())
 	{
 		CurrentControlledTower->OnControlEnd();
+		CurrentControlledTower->SetOwner(nullptr);
 		OnTowerControlEnd.Broadcast(CurrentControlledTower);
 		CurrentControlledTower = nullptr;
 	}
