@@ -33,7 +33,7 @@ void ADFGATA_ActorPlacement::StartTargeting(UGameplayAbility* InAbility)
 
 void ADFGATA_ActorPlacement::ConfirmTargeting()
 {
-	if (bIsTraceHit)
+	if (TraceHitResult.bBlockingHit)
 	{
 		Super::ConfirmTargeting();
 	}
@@ -45,7 +45,7 @@ void ADFGATA_ActorPlacement::ConfirmTargeting()
 
 void ADFGATA_ActorPlacement::ConfirmTargetingAndContinue()
 {
-	if (bIsTraceHit)
+	if (TraceHitResult.bBlockingHit)
 	{
 		Super::ConfirmTargetingAndContinue();
 	}

@@ -21,7 +21,6 @@ ADFGATA_Trace::ADFGATA_Trace()
 	bTraceTowardMouseAimLocation = true;
 
 	CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionProfile;
-	bIsTraceHit = false;
 }
 
 void ADFGATA_Trace::LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, FName ProfileName, const FCollisionQueryParams Params)
