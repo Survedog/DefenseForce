@@ -9,6 +9,7 @@
 #include "Interface/PlayerTowerControlInterface.h"
 #include "Structure/DFTowerBase.h"
 #include "Physics/DFCollision.h"
+#include "GAS/DFGameplayTags.h"
 #include "DefenseForce.h"
 #include "DFLog.h"
 
@@ -64,12 +65,16 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
 	if (IsLocallyControlled())
 	{
-		GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Remove(DFTargetActor);
+		ASC->SpawnedTargetActors.Remove(DFTargetActor);
 		DFTargetActor->SetOwner(nullptr);
 		DFTargetActor = nullptr;
 	}
+
+	FGameplayTagContainer AttackTagContainer(GASTAG_Structure_Action_Attack);
+	ASC->CancelAbilities(&AttackTagContainer);
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -91,9 +96,9 @@ void UGA_TowerControl::OnTargetDataReadyCallback_Implementation(const FGameplayA
 	FGameplayEventData Payload;
 	Payload.TargetData = TargetDataHandle;
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
-	if (!ASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack"))))
+	if (!ASC->HasMatchingGameplayTag(GASTAG_Structure_Action_Attack))
 	{
-		SendGameplayEvent(FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack")), Payload);
+		SendGameplayEvent(GASTAG_Structure_Action_Attack, Payload);
 	}
 	else
 	{
