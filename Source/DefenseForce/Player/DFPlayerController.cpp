@@ -7,6 +7,7 @@
 #include "Structure/DFTowerBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Game/DFGameState.h"
+#include "GAS/DFGameplayTags.h"
 #include "DFLog.h"
 
 ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentStructureUnderCursor(nullptr), CurrentControlledTower(nullptr)
@@ -81,7 +82,7 @@ void ADFPlayerController::EnterBuildMode(TSubclassOf<ADFStructureBase> InTargetS
 		Payload.Instigator = this;
 		Payload.Target = DFPlayerPawn;
 		Payload.OptionalObject = InTargetStructureClass->GetDefaultObject();
-		DFPlayerPawn->GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag(TEXT("Player.Action.BuildStructure")), &Payload);
+		DFPlayerPawn->GetAbilitySystemComponent()->HandleGameplayEvent(GASTAG_Player_Action_BuildStructure, &Payload);
 	}
 	
 	OnEnterBuildMode(InTargetStructureClass);
