@@ -25,9 +25,8 @@ void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 
 		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
 		{
-			LocalReticleActor->SetActorHiddenInGame(false);
-			LocalReticleActor->SetIsTargetValid(true);
-			LocalReticleActor->SetIsTargetAnActor(true);
+			LocalReticleActor->SetIsTargetValid(TraceHitResult.bBlockingHit);
+			LocalReticleActor->SetIsTargetAnActor(TraceHitResult.GetActor() != nullptr);
 
 			if (AGAWorldReticle_ProjectilePath* DFReticleActor = Cast<AGAWorldReticle_ProjectilePath>(LocalReticleActor))
 			{
@@ -48,6 +47,16 @@ void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 	}
 }
 
+void ADFGATA_ProjectilePath::StartTargeting(UGameplayAbility* InAbility)
+{
+	Super::StartTargeting(InAbility);
+
+	if (ReticleActor.IsValid())
+	{
+		ReticleActor->SetActorHiddenInGame(false);
+	}
+}
+
 FHitResult ADFGATA_ProjectilePath::PerformTrace(AActor* InSourceActor)
 {
 	return PerformPathPrediction(InSourceActor).HitResult;
@@ -55,8 +64,6 @@ FHitResult ADFGATA_ProjectilePath::PerformTrace(AActor* InSourceActor)
 
 FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActor* InSourceActor)
 {
-	FPredictProjectilePathResult PredictPathResult;
-
 	FPredictProjectilePathParams PredictParams;
 	PredictParams.ProjectileRadius = ProjectileRadius;
 	PredictParams.TraceChannel = TraceChannel;
@@ -75,6 +82,8 @@ FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActo
 	{
 		DF_NETLOG(LogDFGAS, Warning, TEXT("DFGATA_ProjectilePath only supports trace by collision channel."));
 	}
+
+	FPredictProjectilePathResult PredictPathResult;
 	UGameplayStatics::PredictProjectilePath(InSourceActor->GetWorld(), PredictParams, PredictPathResult);
 	return PredictPathResult;
 }

@@ -21,6 +21,8 @@ public:
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void StartTargeting(UGameplayAbility* InAbility) override;
+
 	virtual FHitResult PerformTrace(AActor* InSourceActor) override;
 	virtual FPredictProjectilePathResult PerformPathPrediction(AActor* InSourceActor);
 
