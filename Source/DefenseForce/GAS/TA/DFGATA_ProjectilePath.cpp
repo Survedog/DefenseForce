@@ -13,13 +13,12 @@ ADFGATA_ProjectilePath::ADFGATA_ProjectilePath() : RelativeProjectileSpawnLocati
 	ProjectileRadius = 0.0f;
 }
 
-void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
+void ADFGATA_ProjectilePath::OnLaunchVelocityChangedCallback(FVector InLaunchVelocity)
 {
-	AActor::Tick(DeltaSeconds);
-
 	if (SourceActor && SourceActor->GetLocalRole() != ENetRole::ROLE_SimulatedProxy)
 	{
-		FPredictProjectilePathResult PredictResult = PerformPathPrediction(SourceActor);
+		LaunchVelocity = InLaunchVelocity;
+		FPredictProjectilePathResult PredictResult = PerformPathPrediction(SourceActor, InLaunchVelocity, ProjectileRadius);
 		TraceHitResult = PredictResult.HitResult;
 		FVector EndPoint = TraceHitResult.bBlockingHit ? TraceHitResult.ImpactPoint : PredictResult.LastTraceDestination.Location;
 
@@ -42,9 +41,12 @@ void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 		{
 			PlayerTowerControlInterface->SetPlayerAimLocation(EndPoint);
 		}
-
-		SetActorLocationAndRotation(EndPoint, SourceActor->GetActorRotation());
 	}
+}
+
+void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
+{
+	AActor::Tick(DeltaSeconds);
 }
 
 void ADFGATA_ProjectilePath::StartTargeting(UGameplayAbility* InAbility)
@@ -59,14 +61,15 @@ void ADFGATA_ProjectilePath::StartTargeting(UGameplayAbility* InAbility)
 
 FHitResult ADFGATA_ProjectilePath::PerformTrace(AActor* InSourceActor)
 {
-	return PerformPathPrediction(InSourceActor).HitResult;
+	return PerformPathPrediction(InSourceActor, LaunchVelocity, ProjectileRadius).HitResult;
 }
 
-FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActor* InSourceActor)
+FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActor* InSourceActor, FVector InLaunchVelocity, float InProjectileRadius)
 {
 	FPredictProjectilePathParams PredictParams;
-	PredictParams.ProjectileRadius = ProjectileRadius;
 	PredictParams.TraceChannel = TraceChannel;
+	PredictParams.LaunchVelocity = InLaunchVelocity;
+	PredictParams.ProjectileRadius = InProjectileRadius;
 
 	IPlayerTowerControlInterface* PlayerTowerControlInterface = CastChecked<IPlayerTowerControlInterface>(InSourceActor);
 	ADFTowerBase* ControlledTower = PlayerTowerControlInterface->GetCurrentControlledTower();

@@ -18,13 +18,16 @@ class DEFENSEFORCE_API ADFGATA_ProjectilePath : public ADFGATA_Trace
 public:
 	ADFGATA_ProjectilePath();
 
+	UFUNCTION(BlueprintCallable)
+	void OnLaunchVelocityChangedCallback(FVector InLaunchVelocity);
+
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void StartTargeting(UGameplayAbility* InAbility) override;
 
 	virtual FHitResult PerformTrace(AActor* InSourceActor) override;
-	virtual FPredictProjectilePathResult PerformPathPrediction(AActor* InSourceActor);
+	virtual FPredictProjectilePathResult PerformPathPrediction(AActor* InSourceActor, FVector InLaunchVelocity, float InProjectileRadius);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
@@ -33,4 +36,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	float ProjectileRadius;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Trace")
+	FVector LaunchVelocity;
 };
