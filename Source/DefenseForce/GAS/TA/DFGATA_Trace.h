@@ -51,8 +51,13 @@ public:
 
 	virtual void StopTargeting();
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetTraceProfile(FName InProfileName) { TraceProfile = FCollisionProfileName(InProfileName); CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionProfile; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetTraceChannel(ECollisionChannel InCollisionChannel) { TraceChannel = InCollisionChannel; CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionChannel; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetCollisionFilterMethod(ETargetActorCollisionFilterMethod InCollisionFilterMethod) { CollisionFilterMethod = InCollisionFilterMethod; }
 
 	UFUNCTION(BlueprintNativeEvent)
@@ -91,13 +96,13 @@ protected:
 	FGameplayAbilityTargetDataHandle MakeTargetData(const FHitResult& HitResult) const;
 
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
 	FCollisionProfileName TraceProfile;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
 	TEnumAsByte<ECollisionChannel> TraceChannel;	
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	ETargetActorCollisionFilterMethod CollisionFilterMethod;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Trace")
