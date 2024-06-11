@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GAS/TA/DFGATA_Trace.h"
+#include "GAS/TA/DFGATA_LineTrace.h"
 #include "DFGATA_ActorPlacement.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetConfirmRejectedDelegate);
@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetConfirmRejectedDelegate);
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API ADFGATA_ActorPlacement : public ADFGATA_Trace
+class DEFENSEFORCE_API ADFGATA_ActorPlacement : public ADFGATA_LineTrace
 {
 	GENERATED_BODY()
 

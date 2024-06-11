@@ -55,9 +55,9 @@ void UGA_BuildStructure::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 			UTargetingInstanceSubsystem* TargetingInstanceSubsystem = ULocalPlayer::GetSubsystem<UTargetingInstanceSubsystem>(ActorInfo->PlayerController->GetLocalPlayer());
 			DFActorPlacementTA = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_ActorPlacement>(ActorPlacementTAClass);
 			DFActorPlacementTA->SetTraceProfile(CPROFILE_BlockOnlyWorld);
-			DFActorPlacementTA->bIgnoreBlockingHits = false;
-			DFActorPlacementTA->bTraceStartsFromPlayerCamera = true;
-			DFActorPlacementTA->bTraceTowardMouseAimLocation = true;
+			DFActorPlacementTA->SetIgnoreBlockingHits(false);
+			DFActorPlacementTA->SetStartTraceFromPlayerCamera(true);
+			DFActorPlacementTA->SetTraceTowardMouseAimLocation(true);
 			DFActorPlacementTA->ReticleClass = ActorVisualReticleClass;
 		}
 
