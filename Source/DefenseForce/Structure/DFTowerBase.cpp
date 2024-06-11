@@ -58,12 +58,8 @@ void ADFTowerBase::InitializeTargetActor_Implementation(AGameplayAbilityTargetAc
 	if (InTargetActor)
 	{
 		InTargetActor->SetOwner(this);
+		InTargetActor->ReticleClass = ReticleClass;
 	}
-	//DFTargetActor->SetTraceChannel(CCHANNEL_PlayerAim);
-	//DFTargetActor->bIgnoreBlockingHits = false;
-	//DFTargetActor->bTraceStartsFromPlayerCamera = true;
-	//DFTargetActor->bTraceTowardMouseAimLocation = true;
-	//DFTargetActor->ReticleClass = TowerToControl->GetReticleClass();
 }
 
 void ADFTowerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
