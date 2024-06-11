@@ -18,22 +18,13 @@ enum class ETargetActorCollisionFilterMethod : uint8
  *  This target actor reuses reticle actor, avoiding duplicate spawning of it.
  *  Meant to be used with AbilityTask DFAT_WaitTargetData_ReusableTA.
  */
-UCLASS()
+UCLASS(Abstract)
 class DEFENSEFORCE_API ADFGATA_Trace : public AGameplayAbilityTargetActor
 {
 	GENERATED_BODY()
 
 public:
-	ADFGATA_Trace();
-
-	/** Traces as normal, but will manually filter all hit actors */
-	static void LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, FName ProfileName, const FCollisionQueryParams Params);
-	static void LineTraceWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, ECollisionChannel CollisionChannel, const FCollisionQueryParams Params);
-
-	/** Sweeps as normal, but will manually filter all hit actors */
-	static void SweepWithFilter(FHitResult& OutHitResult, const UWorld* World, const FGameplayTargetDataFilterHandle FilterHandle, const FVector& Start, const FVector& End, const FQuat& Rotation, const FCollisionShape CollisionShape, FName ProfileName, const FCollisionQueryParams Params);
-
-	static bool ClipCameraRayToAbilityRange(FVector CameraLocation, FVector CameraDirection, FVector AbilityCenter, float AbilityRange, FVector& ClippedPosition);
+	ADFGATA_Trace();	
 	
 	virtual void StartTargeting(UGameplayAbility* InAbility) override;
 
@@ -77,21 +68,8 @@ public:
 	void OnCancelTargeting_Implementation() {}
 	void OnStopTargeting_Implementation() {}
 
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
-	float MaxRange;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
-	bool bIgnoreBlockingHits;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
-	bool bTraceStartsFromPlayerCamera;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
-	bool bTraceTowardMouseAimLocation;
-
 protected:
-	virtual FHitResult PerformTrace(AActor* InSourceActor);
+	virtual FHitResult PerformTrace(AActor* InSourceActor) PURE_VIRTUAL(ADFGATA_Trace, return FHitResult();)
 
 	FGameplayAbilityTargetDataHandle MakeTargetData(const FHitResult& HitResult) const;
 
@@ -103,7 +81,7 @@ protected:
 	TEnumAsByte<ECollisionChannel> TraceChannel;	
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
-	ETargetActorCollisionFilterMethod CollisionFilterMethod;
+	ETargetActorCollisionFilterMethod CollisionFilterMethod;	
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Trace")
 	FHitResult TraceHitResult;
