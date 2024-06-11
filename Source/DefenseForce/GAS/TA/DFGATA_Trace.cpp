@@ -144,12 +144,12 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
 		{
+			LocalReticleActor->SetActorHiddenInGame(!TraceHitResult.bBlockingHit);
+			LocalReticleActor->SetIsTargetValid(TraceHitResult.bBlockingHit);
+			LocalReticleActor->SetIsTargetAnActor(TraceHitResult.GetActor() != nullptr);
+
 			if (TraceHitResult.bBlockingHit)
 			{
-				LocalReticleActor->SetActorHiddenInGame(false);
-				LocalReticleActor->SetIsTargetValid(true);
-				LocalReticleActor->SetIsTargetAnActor(true);
-
 				if (ADFGAWorldReticle* DFReticleActor = Cast<ADFGAWorldReticle>(LocalReticleActor))
 				{
 					DFReticleActor->OnTraceResultSet(TraceHitResult);
@@ -158,12 +158,6 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 				{
 					LocalReticleActor->SetActorLocation(TraceHitResult.Location);
 				}
-			}
-			else
-			{
-				LocalReticleActor->SetActorHiddenInGame(true);
-				LocalReticleActor->SetIsTargetValid(false);
-				LocalReticleActor->SetIsTargetAnActor(false);
 			}
 		}
 		
