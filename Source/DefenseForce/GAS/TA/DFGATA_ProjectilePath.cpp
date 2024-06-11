@@ -5,7 +5,7 @@
 #include "Interface/PlayerTowerControlInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structure/DFTowerBase.h"
-#include "GAS/TA/Reticle/DFGAWorldReticle.h"
+#include "GAS/TA/Reticle/GAWorldReticle_ProjectilePath.h"
 #include "DFLog.h"
 
 ADFGATA_ProjectilePath::ADFGATA_ProjectilePath() : RelativeProjectileSpawnLocation(FVector::Zero())
@@ -29,13 +29,13 @@ void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 			LocalReticleActor->SetIsTargetValid(true);
 			LocalReticleActor->SetIsTargetAnActor(true);
 
-			if (ADFGAWorldReticle* DFReticleActor = Cast<ADFGAWorldReticle>(LocalReticleActor))
+			if (AGAWorldReticle_ProjectilePath* DFReticleActor = Cast<AGAWorldReticle_ProjectilePath>(LocalReticleActor))
 			{
-				DFReticleActor->OnTraceResultSet(TraceHitResult);
+				DFReticleActor->OnPredictPathResultSet(PredictResult);
 			}
 			else
 			{
-				DF_NETLOG(LogDFGAS, Warning, TEXT("Reticle class must be either DFGAWorldReticle or its child class."));
+				DF_NETLOG(LogDFGAS, Warning, TEXT("Reticle class must be either GAWorldReticle_ProjectilePath or its child class."));
 			}
 		}
 
