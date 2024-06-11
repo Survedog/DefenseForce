@@ -25,5 +25,5 @@ protected:
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Targeting")
-	TObjectPtr<class ADFGATA_Trace> DFTargetActor;
+	TObjectPtr<class AGameplayAbilityTargetActor> DFTargetActor;
 };

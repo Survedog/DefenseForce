@@ -3,12 +3,10 @@
 
 #include "GAS/GA/GA_TowerControl.h"
 #include "GAS/AT/DFAT_WaitTargetData_ReusableTA.h"
-#include "Subsystem/TargetingInstanceSubsystem.h"
-#include "GAS/TA/DFGATA_Trace.h"
+#include "Abilities/GameplayAbilityTargetActor.h"
 #include "AbilitySystemComponent.h"
 #include "Interface/PlayerTowerControlInterface.h"
 #include "Structure/DFTowerBase.h"
-#include "Physics/DFCollision.h"
 #include "GAS/DFGameplayTags.h"
 #include "DefenseForce.h"
 #include "DFLog.h"
@@ -30,21 +28,9 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		K2_CancelAbility();
 	}
 
-	if (UTargetingInstanceSubsystem* TargetingInstanceSubsystem = ULocalPlayer::GetSubsystem<UTargetingInstanceSubsystem>(ActorInfo->PlayerController->GetLocalPlayer()))
-	{
-		if (DFTargetActor = TargetingInstanceSubsystem->GetTargetActorFromClass<ADFGATA_Trace>(*TowerToControl->GetTargetActorClass()))
-		{
-			DFTargetActor->SetOwner(TowerToControl);
-			DFTargetActor->SetTraceChannel(CCHANNEL_PlayerAim);
-			DFTargetActor->bIgnoreBlockingHits = false;
-			DFTargetActor->bTraceStartsFromPlayerCamera = true;
-			DFTargetActor->bTraceTowardMouseAimLocation = true;
-		}
-	}
-
+	DFTargetActor = TowerToControl->GetAttackTargetActor();
 	if (DFTargetActor)
 	{		
-		DFTargetActor->ReticleClass = TowerToControl->GetReticleClass();
 		GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Push(DFTargetActor);
 
 		// TODO: Reuse AbilityTask
