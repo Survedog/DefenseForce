@@ -27,4 +27,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetProjectileLaunchSpeed() const = 0;
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetProjectileLaunchPitch() const = 0;
 };
