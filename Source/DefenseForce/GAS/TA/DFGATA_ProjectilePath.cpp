@@ -58,7 +58,7 @@ void ADFGATA_ProjectilePath::StartTargeting(UGameplayAbility* InAbility)
 FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(ADFTowerBase* InControlledTower, FVector InStartLocation, FVector InLaunchVelocity, float InProjectileRadius)
 {
 	FPredictProjectilePathParams PredictParams;
-	PredictParams.TraceChannel = TraceChannel;
+	PredictParams.TraceChannel = PathPredictionCollisionChannel;
 	PredictParams.LaunchVelocity = InLaunchVelocity;
 	PredictParams.ProjectileRadius = InProjectileRadius;
 

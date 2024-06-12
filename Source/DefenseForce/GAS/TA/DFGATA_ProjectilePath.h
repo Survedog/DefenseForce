@@ -18,6 +18,9 @@ class DEFENSEFORCE_API ADFGATA_ProjectilePath : public ADFGATA_LineTrace
 public:
 	ADFGATA_ProjectilePath();
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetPathPredictionCollisionChannel(ECollisionChannel InCollisionChannel) { PathPredictionCollisionChannel = InCollisionChannel; }
+
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -26,6 +29,9 @@ protected:
 	virtual FPredictProjectilePathResult PerformPathPrediction(class ADFTowerBase* InControlledTower, FVector InStartLocation, FVector InLaunchVelocity, float InProjectileRadius = 0.0f);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Prediction")
 	float ProjectileRadius;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Prediction")
+	TEnumAsByte<ECollisionChannel> PathPredictionCollisionChannel;
 };
