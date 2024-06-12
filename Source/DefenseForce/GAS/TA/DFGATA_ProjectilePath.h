@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GAS/TA/DFGATA_Trace.h"
+#include "GAS/TA/DFGATA_LineTrace.h"
 #include "Kismet/GameplayStaticsTypes.h"
 #include "DFGATA_ProjectilePath.generated.h"
 
@@ -11,23 +11,19 @@
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API ADFGATA_ProjectilePath : public ADFGATA_Trace
+class DEFENSEFORCE_API ADFGATA_ProjectilePath : public ADFGATA_LineTrace
 {
 	GENERATED_BODY()
 	
 public:
 	ADFGATA_ProjectilePath();
 
-	UFUNCTION(BlueprintCallable)
-	void OnLaunchVelocityChangedCallback(FVector InLaunchVelocity);
-
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void StartTargeting(UGameplayAbility* InAbility) override;
 
-	virtual FHitResult PerformTrace(AActor* InSourceActor) override;
-	virtual FPredictProjectilePathResult PerformPathPrediction(AActor* InSourceActor, FVector InLaunchVelocity, float InProjectileRadius);
+	virtual FPredictProjectilePathResult PerformPathPrediction(class ADFTowerBase* InControlledTower, FVector InStartLocation, FVector InLaunchVelocity, float InProjectileRadius = 0.0f);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
@@ -35,7 +31,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	float ProjectileRadius;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Trace")
-	FVector LaunchVelocity;
 };

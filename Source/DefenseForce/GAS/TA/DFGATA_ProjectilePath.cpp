@@ -3,6 +3,7 @@
 
 #include "GAS/TA/DFGATA_ProjectilePath.h"
 #include "Interface/PlayerTowerControlInterface.h"
+#include "Interface/DFArcProjectileTowerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structure/DFTowerBase.h"
 #include "GAS/TA/Reticle/GAWorldReticle_ProjectilePath.h"
@@ -11,42 +12,37 @@
 ADFGATA_ProjectilePath::ADFGATA_ProjectilePath() : RelativeProjectileSpawnLocation(FVector::Zero())
 {
 	ProjectileRadius = 0.0f;
+	bHideReticleWhenTargetInvalid = false;
 }
 
-void ADFGATA_ProjectilePath::OnLaunchVelocityChangedCallback(FVector InLaunchVelocity)
+void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
+
 	if (SourceActor && SourceActor->GetLocalRole() != ENetRole::ROLE_SimulatedProxy)
 	{
-		LaunchVelocity = InLaunchVelocity;
-		FPredictProjectilePathResult PredictResult = PerformPathPrediction(SourceActor, InLaunchVelocity, ProjectileRadius);
-		TraceHitResult = PredictResult.HitResult;
-		FVector EndPoint = TraceHitResult.bBlockingHit ? TraceHitResult.ImpactPoint : PredictResult.LastTraceDestination.Location;
-
-		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
+		IPlayerTowerControlInterface* PlayerTowerControlInterface = CastChecked<IPlayerTowerControlInterface>(SourceActor);
+		ADFTowerBase* ControlledTower = PlayerTowerControlInterface->GetCurrentControlledTower();
+		if (IDFArcProjectileTowerInterface* ArcProjectileTowerInterface = Cast<IDFArcProjectileTowerInterface>(ControlledTower))
 		{
-			LocalReticleActor->SetIsTargetValid(TraceHitResult.bBlockingHit);
-			LocalReticleActor->SetIsTargetAnActor(TraceHitResult.GetActor() != nullptr);
-
-			if (AGAWorldReticle_ProjectilePath* DFReticleActor = Cast<AGAWorldReticle_ProjectilePath>(LocalReticleActor))
+			const FVector LaunchStartLocation = ArcProjectileTowerInterface->GetProjectileSpawnLocation();
+			const FVector LaunchVelocity = ArcProjectileTowerInterface->GetProjectileLaunchVelocity();
+			if (LaunchVelocity.IsNearlyZero())
 			{
-				DFReticleActor->OnPredictPathResultSet(PredictResult);
+				return;
+			}
+
+			FPredictProjectilePathResult PredictResult = PerformPathPrediction(ControlledTower, LaunchStartLocation, LaunchVelocity, ProjectileRadius);
+			if (AGAWorldReticle_ProjectilePath* DFProjectilePathReticle = Cast<AGAWorldReticle_ProjectilePath>(ReticleActor.Get()))
+			{
+				DFProjectilePathReticle->OnPredictPathResultSet(PredictResult);
 			}
 			else
 			{
 				DF_NETLOG(LogDFGAS, Warning, TEXT("Reticle class must be either GAWorldReticle_ProjectilePath or its child class."));
 			}
 		}
-
-		if (IPlayerTowerControlInterface* PlayerTowerControlInterface = Cast<IPlayerTowerControlInterface>(SourceActor))
-		{
-			PlayerTowerControlInterface->SetPlayerAimLocation(EndPoint);
-		}
 	}
-}
-
-void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
-{
-	AActor::Tick(DeltaSeconds);
 }
 
 void ADFGATA_ProjectilePath::StartTargeting(UGameplayAbility* InAbility)
@@ -59,22 +55,15 @@ void ADFGATA_ProjectilePath::StartTargeting(UGameplayAbility* InAbility)
 	}
 }
 
-FHitResult ADFGATA_ProjectilePath::PerformTrace(AActor* InSourceActor)
-{
-	return PerformPathPrediction(InSourceActor, LaunchVelocity, ProjectileRadius).HitResult;
-}
-
-FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActor* InSourceActor, FVector InLaunchVelocity, float InProjectileRadius)
+FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(ADFTowerBase* InControlledTower, FVector InStartLocation, FVector InLaunchVelocity, float InProjectileRadius)
 {
 	FPredictProjectilePathParams PredictParams;
 	PredictParams.TraceChannel = TraceChannel;
 	PredictParams.LaunchVelocity = InLaunchVelocity;
 	PredictParams.ProjectileRadius = InProjectileRadius;
 
-	IPlayerTowerControlInterface* PlayerTowerControlInterface = CastChecked<IPlayerTowerControlInterface>(InSourceActor);
-	ADFTowerBase* ControlledTower = PlayerTowerControlInterface->GetCurrentControlledTower();
-	PredictParams.ActorsToIgnore.Add(ControlledTower);
-	PredictParams.StartLocation = ControlledTower->GetActorLocation() + RelativeProjectileSpawnLocation;
+	PredictParams.ActorsToIgnore.Add(InControlledTower);
+	PredictParams.StartLocation = InStartLocation;
 
 	if (CollisionFilterMethod == ETargetActorCollisionFilterMethod::CollisionChannel)
 	{
@@ -95,6 +84,6 @@ FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActo
 #endif // ENABLE_DRAW_DEBUG
 
 	FPredictProjectilePathResult PredictPathResult;
-	UGameplayStatics::PredictProjectilePath(InSourceActor->GetWorld(), PredictParams, PredictPathResult);
+	UGameplayStatics::PredictProjectilePath(InControlledTower->GetWorld(), PredictParams, PredictPathResult);
 	return PredictPathResult;
 }
