@@ -86,6 +86,14 @@ FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(AActo
 		DF_NETLOG(LogDFGAS, Warning, TEXT("DFGATA_ProjectilePath only supports trace by collision channel."));
 	}
 
+#if ENABLE_DRAW_DEBUG
+	if (bDebug)
+	{
+		PredictParams.DrawDebugType = EDrawDebugTrace::ForDuration;
+		PredictParams.DrawDebugTime = 0.1f;
+	}
+#endif // ENABLE_DRAW_DEBUG
+
 	FPredictProjectilePathResult PredictPathResult;
 	UGameplayStatics::PredictProjectilePath(InSourceActor->GetWorld(), PredictParams, PredictPathResult);
 	return PredictPathResult;
