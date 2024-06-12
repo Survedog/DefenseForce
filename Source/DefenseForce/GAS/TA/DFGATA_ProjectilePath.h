@@ -27,8 +27,5 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	FVector RelativeProjectileSpawnLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	float ProjectileRadius;
 };

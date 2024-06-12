@@ -9,7 +9,7 @@
 #include "GAS/TA/Reticle/GAWorldReticle_ProjectilePath.h"
 #include "DFLog.h"
 
-ADFGATA_ProjectilePath::ADFGATA_ProjectilePath() : RelativeProjectileSpawnLocation(FVector::Zero())
+ADFGATA_ProjectilePath::ADFGATA_ProjectilePath()
 {
 	ProjectileRadius = 0.0f;
 	bHideReticleWhenTargetInvalid = false;
@@ -23,10 +23,10 @@ void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 	{
 		IPlayerTowerControlInterface* PlayerTowerControlInterface = CastChecked<IPlayerTowerControlInterface>(SourceActor);
 		ADFTowerBase* ControlledTower = PlayerTowerControlInterface->GetCurrentControlledTower();
-		if (IDFArcProjectileTowerInterface* ArcProjectileTowerInterface = Cast<IDFArcProjectileTowerInterface>(ControlledTower))
+		if (ControlledTower->Implements<UDFArcProjectileTowerInterface>())
 		{
-			const FVector LaunchStartLocation = ArcProjectileTowerInterface->GetProjectileSpawnLocation();
-			const FVector LaunchVelocity = ArcProjectileTowerInterface->GetProjectileLaunchVelocity();
+			const FVector LaunchStartLocation = IDFArcProjectileTowerInterface::Execute_GetProjectileSpawnLocation(ControlledTower);
+			const FVector LaunchVelocity = IDFArcProjectileTowerInterface::Execute_GetProjectileLaunchVelocity(ControlledTower);
 			if (LaunchVelocity.IsNearlyZero())
 			{
 				return;
