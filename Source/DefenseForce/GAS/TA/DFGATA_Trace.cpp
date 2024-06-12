@@ -16,6 +16,7 @@ ADFGATA_Trace::ADFGATA_Trace()
 	PrimaryActorTick.TickGroup = TG_PostUpdateWork;
 	
 	CollisionFilterMethod = ETargetActorCollisionFilterMethod::CollisionProfile;
+	bHideReticleWhenTargetInvalid = true;
 }
 
 void ADFGATA_Trace::StartTargeting(UGameplayAbility* InAbility)
@@ -144,9 +145,13 @@ void ADFGATA_Trace::Tick(float DeltaSeconds)
 
 		if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActor.Get())
 		{
-			LocalReticleActor->SetActorHiddenInGame(!TraceHitResult.bBlockingHit);
 			LocalReticleActor->SetIsTargetValid(TraceHitResult.bBlockingHit);
 			LocalReticleActor->SetIsTargetAnActor(TraceHitResult.GetActor() != nullptr);
+
+			if (bHideReticleWhenTargetInvalid)
+			{
+				LocalReticleActor->SetActorHiddenInGame(!TraceHitResult.bBlockingHit);
+			}
 
 			if (TraceHitResult.bBlockingHit)
 			{
