@@ -64,6 +64,8 @@ FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(ADFTo
 
 	PredictParams.ActorsToIgnore.Add(InControlledTower);
 	PredictParams.StartLocation = InStartLocation;
+	PredictParams.MaxSimTime = 3.0f;
+	PredictParams.SimFrequency = 10.0f;
 
 	if (CollisionFilterMethod == ETargetActorCollisionFilterMethod::CollisionChannel)
 	{
