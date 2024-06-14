@@ -14,6 +14,9 @@ class DEFENSEFORCE_API ADFProjectileBase : public AActor
 public:	
 	ADFProjectileBase();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	float GetDamageAmount() const;
+
 protected:
 	virtual void BeginPlay() override;
 
