@@ -14,7 +14,7 @@ class DEFENSEFORCE_API ADFProjectileBase : public AActor
 public:	
 	ADFProjectileBase();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	float GetDamageAmount() const;
 
 protected:
@@ -23,6 +23,6 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	FORCEINLINE float ApplyPointDamage(AActor* DamagedActor, float BaseDamage, FVector const& HitFromDirection, FHitResult const& HitInfo, TSubclassOf<UDamageType> DamageTypeClass);
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "IgnoreActors"))
 	FORCEINLINE bool ApplyRadialDamage(const UObject* WorldContextObject, float BaseDamage, const FVector& Origin, float DamageRadius, TSubclassOf<class UDamageType> DamageTypeClass, const TArray<AActor*>& IgnoreActors, bool bDoFullDamage = false, ECollisionChannel DamagePreventionChannel = ECC_Visibility);
 };
