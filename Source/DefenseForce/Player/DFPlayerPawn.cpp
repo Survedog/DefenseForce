@@ -105,7 +105,7 @@ bool ADFPlayerPawn::TryActivateAbilityOfClass(TSubclassOf<UGameplayAbility> InAb
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
 	if (Spec && !Spec->IsActive())
 	{
-		return ASC->TryActivateAbilityByClass(InAbilityClass, bAllowRemoteActivation);
+		return ASC->TryActivateAbility(Spec->Handle, bAllowRemoteActivation);
 	}
 	return false;
 }

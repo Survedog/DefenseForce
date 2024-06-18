@@ -26,9 +26,14 @@ bool ADFStructureBase::TryActivateAbilityOfClass(TSubclassOf<class UGameplayAbil
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
 	if (Spec && !Spec->IsActive())
 	{
-		return ASC->TryActivateAbilityByClass(InAbilityClass, bAllowRemoteActivation);
+		return ASC->TryActivateAbility(Spec->Handle, bAllowRemoteActivation);
 	}
 	return false;
+}
+
+int32 ADFStructureBase::HandleGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload)
+{
+	return ASC->HandleGameplayEvent(EventTag, &Payload);
 }
 
 void ADFStructureBase::CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass)
@@ -50,5 +55,17 @@ void ADFStructureBase::BeginPlay()
 	{
 		OnBeginCursorOver.AddDynamic(LocalDFPlayer, &ADFPlayerController::OnBeginCursorOverStructureCallback);
 		OnEndCursorOver.AddDynamic(LocalDFPlayer, &ADFPlayerController::OnEndCursorOverStructureCallback);
+	}
+
+	ASC->InitAbilityActorInfo(this, this);
+
+	if (HasAuthority())
+	{
+		// Give Abilities
+		for (auto ActivatableAbility : ActivatableAbilities)
+		{
+			FGameplayAbilitySpec AbilitySpec(ActivatableAbility);
+			ASC->GiveAbility(AbilitySpec);
+		}
 	}
 }

@@ -24,6 +24,9 @@ public:
 	bool TryActivateAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation);
 
 	UFUNCTION(BlueprintCallable)
+	int32 HandleGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
+
+	UFUNCTION(BlueprintCallable)
 	void CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass);
 
 protected:
@@ -38,4 +41,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UAbilitySystemComponent> ASC;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	TArray<TSubclassOf<class UGameplayAbility>> ActivatableAbilities;
 };
