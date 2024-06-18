@@ -3,6 +3,7 @@
 
 #include "Structure/DFStructureBase.h"
 #include "Player/DFPlayerController.h"
+#include "AbilitySystemComponent.h"
 #include "DFLog.h"
 
 ADFStructureBase::ADFStructureBase()
@@ -14,6 +15,29 @@ ADFStructureBase::ADFStructureBase()
 	RootComponent = RootSceneComponent;
 
 	BuildCost = 0.0f;
+
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	ASC->SetIsReplicated(true);
+	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;
+}
+
+bool ADFStructureBase::TryActivateAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
+	if (Spec && !Spec->IsActive())
+	{
+		return ASC->TryActivateAbilityByClass(InAbilityClass, bAllowRemoteActivation);
+	}
+	return false;
+}
+
+void ADFStructureBase::CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
+	if (Spec && Spec->IsActive())
+	{
+		ASC->CancelAbilityHandle(Spec->Handle);
+	}
 }
 
 void ADFStructureBase::BeginPlay()
