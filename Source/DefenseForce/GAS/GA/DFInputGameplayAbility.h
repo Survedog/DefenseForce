@@ -3,19 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "GAS/GA/DFGameplayAbility.h"
 #include "DFInputGameplayAbility.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API UDFInputGameplayAbility : public UGameplayAbility
+class DEFENSEFORCE_API UDFInputGameplayAbility : public UDFGameplayAbility
 {
 	GENERATED_BODY()
-	
-public:
-	UDFInputGameplayAbility();
 
 protected:
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;

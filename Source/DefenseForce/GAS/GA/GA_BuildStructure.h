@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "GAS/GA/DFGameplayAbility.h"
 #include "GA_BuildStructure.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API UGA_BuildStructure : public UGameplayAbility
+class DEFENSEFORCE_API UGA_BuildStructure : public UDFGameplayAbility
 {
 	GENERATED_BODY()
 	
