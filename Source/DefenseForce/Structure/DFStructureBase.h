@@ -43,5 +43,5 @@ protected:
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
-	TArray<TSubclassOf<class UGameplayAbility>> ActivatableAbilities;
+	TArray<TSubclassOf<class UGameplayAbility>> InnateAbilities;
 };

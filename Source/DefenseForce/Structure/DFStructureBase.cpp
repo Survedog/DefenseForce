@@ -62,7 +62,7 @@ void ADFStructureBase::BeginPlay()
 	if (HasAuthority())
 	{
 		// Give Abilities
-		for (auto ActivatableAbility : ActivatableAbilities)
+		for (auto ActivatableAbility : InnateAbilities)
 		{
 			FGameplayAbilitySpec AbilitySpec(ActivatableAbility);
 			ASC->GiveAbility(AbilitySpec);
