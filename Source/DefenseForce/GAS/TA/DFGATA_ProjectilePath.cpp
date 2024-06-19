@@ -3,7 +3,7 @@
 
 #include "GAS/TA/DFGATA_ProjectilePath.h"
 #include "Interface/PlayerTowerControlInterface.h"
-#include "Interface/DFArcProjectileTowerInterface.h"
+#include "Interface/DFProjectileTowerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structure/DFTowerBase.h"
 #include "GAS/TA/Reticle/GAWorldReticle_ProjectilePath.h"
@@ -23,10 +23,10 @@ void ADFGATA_ProjectilePath::Tick(float DeltaSeconds)
 	{
 		IPlayerTowerControlInterface* PlayerTowerControlInterface = CastChecked<IPlayerTowerControlInterface>(SourceActor);
 		ADFTowerBase* ControlledTower = PlayerTowerControlInterface->GetCurrentControlledTower();
-		if (ControlledTower->Implements<UDFArcProjectileTowerInterface>())
+		if (ControlledTower->Implements<UDFProjectileTowerInterface>())
 		{
-			const FVector LaunchStartLocation = IDFArcProjectileTowerInterface::Execute_GetProjectileSpawnLocation(ControlledTower);
-			const FVector LaunchVelocity = IDFArcProjectileTowerInterface::Execute_GetProjectileLaunchVelocity(ControlledTower);
+			const FVector LaunchStartLocation = IDFProjectileTowerInterface::Execute_GetProjectileSpawnLocation(ControlledTower);
+			const FVector LaunchVelocity = IDFProjectileTowerInterface::Execute_GetProjectileLaunchVelocity(ControlledTower);
 			if (LaunchVelocity.IsNearlyZero())
 			{
 				return;
