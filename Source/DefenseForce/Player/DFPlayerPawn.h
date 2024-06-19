@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass);
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 HandleGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TWeakObjectPtr<class UAbilitySystemComponent> ASC;

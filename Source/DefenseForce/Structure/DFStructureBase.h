@@ -24,7 +24,7 @@ public:
 	bool TryActivateAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation);
 
 	UFUNCTION(BlueprintCallable)
-	int32 HandleGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
+	FORCEINLINE int32 HandleGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
 
 	UFUNCTION(BlueprintCallable)
 	void CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass);

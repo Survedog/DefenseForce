@@ -119,6 +119,11 @@ void ADFPlayerPawn::CancelAbilityOfClass(TSubclassOf<UGameplayAbility> InAbility
 	}
 }
 
+int32 ADFPlayerPawn::HandleGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload)
+{
+	return ASC->HandleGameplayEvent(EventTag, &Payload);
+}
+
 void ADFPlayerPawn::OnRep_Controller()
 {
 	Super::OnRep_Controller();
