@@ -21,6 +21,37 @@ ADFStructureBase::ADFStructureBase()
 	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;
 }
 
+void ADFStructureBase::AbilityInputPressed(EDFAbilityInputID InputID)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
+	if (Spec)
+	{
+		Spec->InputPressed = true;
+
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
+		else
+		{
+			ASC->TryActivateAbility(Spec->Handle, true);
+		}
+	}
+}
+
+void ADFStructureBase::AbilityInputReleased(EDFAbilityInputID InputID)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InputID));
+	if (Spec)
+	{
+		Spec->InputPressed = false;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputReleased(*Spec);
+		}
+	}
+}
+
 bool ADFStructureBase::TryActivateAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation)
 {
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromClass(InAbilityClass);
@@ -62,9 +93,16 @@ void ADFStructureBase::BeginPlay()
 	if (HasAuthority())
 	{
 		// Give Abilities
-		for (auto ActivatableAbility : InnateAbilities)
+		for (auto Ability : NonInputAbilities)
 		{
-			FGameplayAbilitySpec AbilitySpec(ActivatableAbility);
+			FGameplayAbilitySpec AbilitySpec(Ability);
+			ASC->GiveAbility(AbilitySpec);
+		}
+
+		for (auto InputAbilityPair : InputAbilityMap)
+		{
+			FGameplayAbilitySpec AbilitySpec(InputAbilityPair.Value);
+			AbilitySpec.InputID = static_cast<int32>(InputAbilityPair.Key);
 			ASC->GiveAbility(AbilitySpec);
 		}
 	}

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "AbilitySystemInterface.h"
+#include "DefenseForce.h"
 #include "DFStructureBase.generated.h"
 
 UCLASS()
@@ -19,6 +20,12 @@ public:
 
 	FORCEINLINE float GetBuildCost() const { return BuildCost; }
 	FORCEINLINE void SetBuildCost(float NewBuildCost) { BuildCost = NewBuildCost; }
+
+	UFUNCTION(BlueprintCallable)
+	void AbilityInputPressed(EDFAbilityInputID InputID);
+
+	UFUNCTION(BlueprintCallable)
+	void AbilityInputReleased(EDFAbilityInputID InputID);
 
 	UFUNCTION(BlueprintCallable)
 	bool TryActivateAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass, bool bAllowRemoteActivation);
@@ -43,5 +50,8 @@ protected:
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
-	TArray<TSubclassOf<class UGameplayAbility>> InnateAbilities;
+	TArray<TSubclassOf<class UGameplayAbility>> NonInputAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	TMap<EDFAbilityInputID, TSubclassOf<class UGameplayAbility>> InputAbilityMap;
 };
