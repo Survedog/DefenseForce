@@ -26,4 +26,7 @@ protected:
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Targeting")
 	TObjectPtr<class AGameplayAbilityTargetActor> DFTargetActor;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Control")
+	TObjectPtr<class ADFTowerBase> ControlledTower;
 };

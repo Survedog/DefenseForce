@@ -22,13 +22,13 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	}
 
 	IPlayerTowerControlInterface* TowerControlInterface = CastChecked<IPlayerTowerControlInterface>(ActorInfo->AvatarActor);
-	ADFTowerBase* TowerToControl = Cast<ADFTowerBase>(TowerControlInterface->GetCurrentStructureUnderCursor());
-	if (!TowerToControl)
+	ControlledTower = Cast<ADFTowerBase>(TowerControlInterface->GetCurrentStructureUnderCursor());
+	if (!ControlledTower)
 	{
 		K2_CancelAbility();
 	}
 
-	DFTargetActor = TowerToControl->GetAttackTargetActor();
+	DFTargetActor = ControlledTower->GetAttackTargetActor();
 	if (DFTargetActor)
 	{		
 		GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Push(DFTargetActor);
@@ -57,6 +57,7 @@ void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 		ASC->SpawnedTargetActors.Remove(DFTargetActor);
 		DFTargetActor->SetOwner(nullptr);
 		DFTargetActor = nullptr;
+		ControlledTower = nullptr;
 	}
 
 	FGameplayTagContainer AttackTagContainer(GASTAG_Structure_Action_Attack);
@@ -68,8 +69,6 @@ void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 void UGA_TowerControl::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));	
-	IPlayerTowerControlInterface* TowerControlInterface = CastChecked<IPlayerTowerControlInterface>(ActorInfo->AvatarActor);
-	ADFTowerBase* ControlledTower = TowerControlInterface->GetCurrentControlledTower();
 	if (ControlledTower && ControlledTower->ShouldConfirmTargetOnInputPressed())
 	{
 		DFTargetActor->ConfirmTargetingAndContinue();
@@ -81,17 +80,9 @@ void UGA_TowerControl::OnTargetDataReadyCallback_Implementation(const FGameplayA
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
 	FGameplayEventData Payload;
 	Payload.TargetData = TargetDataHandle;
-	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
-	if (!ASC->HasMatchingGameplayTag(GASTAG_Structure_Action_Attack))
+	UAbilitySystemComponent* TowerASC = ControlledTower->GetAbilitySystemComponent();
+	if (!TowerASC->HasMatchingGameplayTag(GASTAG_Structure_Action_Attack))
 	{
-		SendGameplayEvent(GASTAG_Structure_Action_Attack, Payload);
-	}
-	else
-	{
-		FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(EDFAbilityInputID::Attack));
-		if (Spec)
-		{
-			ASC->AbilitySpecInputPressed(*Spec);
-		}
+		TowerASC->HandleGameplayEvent(GASTAG_Structure_Action_Attack, &Payload);
 	}
 }
