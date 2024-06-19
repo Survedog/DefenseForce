@@ -51,17 +51,19 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
-	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
+
+	UAbilitySystemComponent* TowerASC = ControlledTower->GetAbilitySystemComponent();
+	FGameplayTagContainer AttackTagContainer(GASTAG_Structure_Action_Attack);
+	TowerASC->CancelAbilities(&AttackTagContainer);
+
+	UAbilitySystemComponent* PlayerASC = GetAbilitySystemComponentFromActorInfo_Checked();
 	if (IsLocallyControlled())
 	{
-		ASC->SpawnedTargetActors.Remove(DFTargetActor);
+		PlayerASC->SpawnedTargetActors.Remove(DFTargetActor);
 		DFTargetActor->SetOwner(nullptr);
 		DFTargetActor = nullptr;
 		ControlledTower = nullptr;
-	}
-
-	FGameplayTagContainer AttackTagContainer(GASTAG_Structure_Action_Attack);
-	ASC->CancelAbilities(&AttackTagContainer);
+	}	
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
