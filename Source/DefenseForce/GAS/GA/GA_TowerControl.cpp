@@ -20,12 +20,20 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	{
 		return;
 	}
-	
-	ADFTowerBase* TowerToControl = CastChecked<ADFTowerBase>(ActorInfo->AvatarActor);
+
+	IPlayerTowerControlInterface* TowerControlInterface = CastChecked<IPlayerTowerControlInterface>(ActorInfo->AvatarActor);
+	ADFTowerBase* TowerToControl = Cast<ADFTowerBase>(TowerControlInterface->GetCurrentStructureUnderCursor());
+	if (!TowerToControl)
+	{
+		K2_CancelAbility();
+	}
+
 	DFTargetActor = TowerToControl->GetAttackTargetActor();
 	if (DFTargetActor)
 	{		
-		TowerToControl->GetAbilitySystemComponent()->SpawnedTargetActors.Push(DFTargetActor);
+		GetAbilitySystemComponentFromActorInfo()->SpawnedTargetActors.Push(DFTargetActor);
+
+		// TODO: Reuse AbilityTask
 		UDFAT_WaitTargetData_ReusableTA* WaitTargetDataTask = UDFAT_WaitTargetData_ReusableTA::WaitTargetDataUsingReusableTA(this, FName("WaitAttackTargetData"), EGameplayTargetingConfirmation::Type::CustomMulti, DFTargetActor);
 		if (WaitTargetDataTask)
 		{
@@ -43,16 +51,16 @@ void UGA_TowerControl::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start. EndState: %s"), bWasCancelled ? TEXT("Cancelled") : TEXT("Confirmed"));
-	UAbilitySystemComponent* TowerASC = GetAbilitySystemComponentFromActorInfo_Checked();
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
 	if (IsLocallyControlled())
 	{
-		TowerASC->SpawnedTargetActors.Remove(DFTargetActor);
+		ASC->SpawnedTargetActors.Remove(DFTargetActor);
 		DFTargetActor->SetOwner(nullptr);
 		DFTargetActor = nullptr;
 	}
 
 	FGameplayTagContainer AttackTagContainer(GASTAG_Structure_Action_Attack);
-	TowerASC->CancelAbilities(&AttackTagContainer);
+	ASC->CancelAbilities(&AttackTagContainer);
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -60,7 +68,8 @@ void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 void UGA_TowerControl::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));	
-	ADFTowerBase* ControlledTower = CastChecked<ADFTowerBase>(ActorInfo->AvatarActor);
+	IPlayerTowerControlInterface* TowerControlInterface = CastChecked<IPlayerTowerControlInterface>(ActorInfo->AvatarActor);
+	ADFTowerBase* ControlledTower = TowerControlInterface->GetCurrentControlledTower();
 	if (ControlledTower && ControlledTower->ShouldConfirmTargetOnInputPressed())
 	{
 		DFTargetActor->ConfirmTargetingAndContinue();
@@ -70,11 +79,19 @@ void UGA_TowerControl::InputPressed(const FGameplayAbilitySpecHandle Handle, con
 void UGA_TowerControl::OnTargetDataReadyCallback_Implementation(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
 	DF_NETGASLOG(LogDFGAS, Log, TEXT("Start"));
-	UAbilitySystemComponent* TowerASC = GetAbilitySystemComponentFromActorInfo_Checked();
-	if (!TowerASC->HasMatchingGameplayTag(GASTAG_Structure_Action_Attack))
+	FGameplayEventData Payload;
+	Payload.TargetData = TargetDataHandle;
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo_Checked();
+	if (!ASC->HasMatchingGameplayTag(GASTAG_Structure_Action_Attack))
 	{
-		FGameplayEventData Payload;
-		Payload.TargetData = TargetDataHandle;
 		SendGameplayEvent(GASTAG_Structure_Action_Attack, Payload);
+	}
+	else
+	{
+		FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(EDFAbilityInputID::Attack));
+		if (Spec)
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
 	}
 }
