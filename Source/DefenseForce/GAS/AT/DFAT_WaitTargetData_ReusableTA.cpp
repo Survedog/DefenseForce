@@ -15,7 +15,7 @@ UDFAT_WaitTargetData_ReusableTA* UDFAT_WaitTargetData_ReusableTA::WaitTargetData
 {
 	check(InTargetActor);
 	check(OwningAbility);
-	DF_NETCUSTOMLOG(OwningAbility->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(OwningAbility->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	UDFAT_WaitTargetData_ReusableTA* MyObj = NewAbilityTask<UDFAT_WaitTargetData_ReusableTA>(OwningAbility, TaskInstanceName);		//Register for task list here, providing a given FName as a key
 	MyObj->TargetActor = InTargetActor;
@@ -31,7 +31,7 @@ UDFAT_WaitTargetData_ReusableTA* UDFAT_WaitTargetData_ReusableTA::WaitTargetData
 void UDFAT_WaitTargetData_ReusableTA::Activate()
 {
 	check(Ability);
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	if (!IsValid(this))
 	{
@@ -54,7 +54,7 @@ void UDFAT_WaitTargetData_ReusableTA::Activate()
 void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag ActivationTag)
 {
 	check(AbilitySystemComponent.IsValid());
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	FGameplayAbilityTargetDataHandle MutableData = Data;
 
@@ -93,7 +93,7 @@ void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReplicatedCallback(const FGame
 /** Client canceled this Targeting Task (we are the server) */
 void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReplicatedCancelledCallback()
 {
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
 		Cancelled.Broadcast(FGameplayAbilityTargetDataHandle());
@@ -106,7 +106,7 @@ void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReadyCallback(const FGameplayA
 {
 	check(AbilitySystemComponent.IsValid());
 	check(Ability);
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	FScopedPredictionWindow	ScopedPrediction(AbilitySystemComponent.Get(), ShouldReplicateDataToServer());
 
@@ -140,7 +140,7 @@ void UDFAT_WaitTargetData_ReusableTA::OnTargetDataReadyCallback(const FGameplayA
 void UDFAT_WaitTargetData_ReusableTA::OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& Data)
 {
 	check(AbilitySystemComponent.IsValid());
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo()->GetOwner(), LogDFGAS, Log, TEXT("Start"));
 
 	FScopedPredictionWindow ScopedPrediction(AbilitySystemComponent.Get(), IsPredictingClient());
 
@@ -163,7 +163,7 @@ void UDFAT_WaitTargetData_ReusableTA::OnTargetDataCancelledCallback(const FGamep
 
 void UDFAT_WaitTargetData_ReusableTA::ExternalConfirm(bool bEndTask)
 {
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 	if (TargetActor)
 	{
 		if (TargetActor->ShouldProduceTargetData())
@@ -176,7 +176,7 @@ void UDFAT_WaitTargetData_ReusableTA::ExternalConfirm(bool bEndTask)
 
 void UDFAT_WaitTargetData_ReusableTA::ExternalCancel()
 {
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
 		Cancelled.Broadcast(FGameplayAbilityTargetDataHandle());
@@ -188,7 +188,7 @@ void UDFAT_WaitTargetData_ReusableTA::InitializeTargetActor(AGameplayAbilityTarg
 {
 	check(InTargetActor);
 	check(Ability);
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	InTargetActor->PrimaryPC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 
@@ -207,7 +207,7 @@ void UDFAT_WaitTargetData_ReusableTA::FinalizeTargetActor(AGameplayAbilityTarget
 {
 	check(InTargetActor);
 	check(Ability);
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	// TODO: Add TA to ASC's SpawnedTargetActors array when it's spawned.
 	//if (AbilitySystemComponent.IsValid())
@@ -240,7 +240,7 @@ void UDFAT_WaitTargetData_ReusableTA::RegisterTargetDataCallbacks()
 	check(IsValid(this));
 	check(AbilitySystemComponent.Get())
 	check(Ability);
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	const bool bIsLocallyControlled = Ability->GetCurrentActorInfo()->IsLocallyControlled();
 	const bool bShouldProduceTargetDataOnServer = TargetActor->ShouldProduceTargetDataOnServer;
@@ -268,7 +268,7 @@ void UDFAT_WaitTargetData_ReusableTA::RegisterTargetDataCallbacks()
 
 void UDFAT_WaitTargetData_ReusableTA::OnDestroy(bool AbilityEnded)
 {
-	DF_NETCUSTOMLOG(Ability->GetActorInfo().AvatarActor, LogDFGAS, Log, TEXT("Start"));
+	DF_NETCUSTOMLOG(Ability->GetAvatarActorFromActorInfo(), LogDFGAS, Log, TEXT("Start"));
 
 	if (TargetActor)
 	{
