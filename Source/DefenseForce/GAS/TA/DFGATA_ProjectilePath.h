@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Prediction")
 	float ProjectileRadius;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Prediction")
+	float ProjectileGravityZ;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Prediction")
 	TEnumAsByte<ECollisionChannel> PathPredictionCollisionChannel;
 };

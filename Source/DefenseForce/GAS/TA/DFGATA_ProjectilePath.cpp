@@ -12,6 +12,7 @@
 ADFGATA_ProjectilePath::ADFGATA_ProjectilePath()
 {
 	ProjectileRadius = 0.0f;
+	ProjectileGravityZ = 0.0f;
 	bHideReticleWhenTargetInvalid = false;
 }
 
@@ -61,7 +62,7 @@ FPredictProjectilePathResult ADFGATA_ProjectilePath::PerformPathPrediction(ADFTo
 	PredictParams.TraceChannel = PathPredictionCollisionChannel;
 	PredictParams.LaunchVelocity = InLaunchVelocity;
 	PredictParams.ProjectileRadius = InProjectileRadius;
-
+	PredictParams.OverrideGravityZ = ProjectileGravityZ;
 	PredictParams.ActorsToIgnore.Add(InControlledTower);
 	PredictParams.StartLocation = InStartLocation;
 	PredictParams.MaxSimTime = 3.0f;
