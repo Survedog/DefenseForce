@@ -5,4 +5,5 @@
 #include "GameplayTagContainer.h"
 
 #define GASTAG_Structure_Action_Attack FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack"))
+#define GASTAG_Structure_Action_Attack_Cooldown FGameplayTag::RequestGameplayTag(TEXT("Structure.Action.Attack.Cooldown"))
 #define GASTAG_Player_Action_BuildStructure FGameplayTag::RequestGameplayTag(TEXT("Player.Action.BuildStructure"))
