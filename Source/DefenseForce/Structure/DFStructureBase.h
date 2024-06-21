@@ -41,10 +41,7 @@ protected:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<class USceneComponent> RootSceneComponent;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Build")
-	float BuildCost;
+	TObjectPtr<class USceneComponent> RootSceneComponent;		
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UAbilitySystemComponent> ASC;
@@ -54,4 +51,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
 	TMap<EDFAbilityInputID, TSubclassOf<class UGameplayAbility>> InputAbilityMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Build")
+	float BuildCost;
 };

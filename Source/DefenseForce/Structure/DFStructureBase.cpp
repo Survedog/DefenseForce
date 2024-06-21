@@ -14,11 +14,11 @@ ADFStructureBase::ADFStructureBase()
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
 	RootComponent = RootSceneComponent;
 
-	BuildCost = 0.0f;
-
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	ASC->SetIsReplicated(true);
-	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;
+	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;	
+
+	BuildCost = 0.0f;
 }
 
 void ADFStructureBase::AbilityInputPressed(EDFAbilityInputID InputID)
