@@ -16,11 +16,11 @@ class DEFENSEFORCE_API UGASUserWidget : public UUserWidget, public IAbilitySyste
 	GENERATED_BODY()
 	
 public:
-	virtual void SetAbilitySystemComponent(UAbilitySystemComponent* NewASC) { ASC = NewASC; }
+	virtual void SetAbilitySystemComponent(class UAbilitySystemComponent* NewASC);
 
-	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override { return ASC.Get(); }
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GAS)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TWeakObjectPtr<class UAbilitySystemComponent> ASC;
 };

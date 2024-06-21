@@ -2,4 +2,14 @@
 
 
 #include "UI/GASUserWidget.h"
+#include "AbilitySystemComponent.h"
 
+void UGASUserWidget::SetAbilitySystemComponent(UAbilitySystemComponent* NewASC)
+{
+	ASC = NewASC;
+}
+
+UAbilitySystemComponent* UGASUserWidget::GetAbilitySystemComponent() const
+{
+	return ASC.Get();
+}
