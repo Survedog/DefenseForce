@@ -46,6 +46,9 @@ protected:
 	void OnRep_ControllingPlayerPawn();
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<class UGASWidgetComponent> CooldownWidgetComponent;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_ControllingPlayerPawn, Category = "Player Control")
 	TWeakObjectPtr<class ADFPlayerPawn> ControllingPlayerPawn;
 

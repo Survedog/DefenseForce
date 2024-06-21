@@ -4,6 +4,8 @@
 #include "Structure/DFTowerBase.h"
 #include "Player/DFPlayerPawn.h"
 #include "Player/DFPlayerController.h"
+#include "UI/GASUserWidget.h"
+#include "UI/GASWidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "GAS/TA/DFGATA_Trace.h"
 #include "Subsystem/TargetingInstanceSubsystem.h"
@@ -15,6 +17,15 @@ ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
 	
 	bIsBeingControlled = false;
 	bConfirmTargetOnInputPressed = true;
+
+	CooldownWidgetComponent = CreateDefaultSubobject<UGASWidgetComponent>(TEXT("CooldownWidgetComponent"));
+	CooldownWidgetComponent->SetupAttachment(RootSceneComponent);
+
+	static ConstructorHelpers::FClassFinder<UGASUserWidget> CooldownWidgetClassRef(TEXT("/Game/DefenseForce/Blueprint/UI/WBP_CooldownBar.WBP_CooldownBar_C"));
+	if (CooldownWidgetClassRef.Class)
+	{
+		CooldownWidgetComponent->SetWidgetClass(CooldownWidgetClassRef.Class);
+	}
 
 	static ConstructorHelpers::FClassFinder<ADFGATA_Trace> TargetActorClassRef(TEXT("/Script/CoreUObject.Class'/Script/DefenseForce.DFGATA_Trace'"));
 	if (TargetActorClassRef.Class)
