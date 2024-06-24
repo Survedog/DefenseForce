@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Interface/DFAIAttackInterface.h"
 #include "DFEnemyCharacter.generated.h"
 
-UCLASS()
-class DEFENSEFORCE_API ADFEnemyCharacter : public ACharacter, public IAbilitySystemInterface
+UCLASS(Abstract)
+class DEFENSEFORCE_API ADFEnemyCharacter : public ACharacter, public IAbilitySystemInterface, public IDFAIAttackInterface
 {
 	GENERATED_BODY()
 
@@ -16,6 +17,8 @@ public:
 	ADFEnemyCharacter();
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	virtual EBTNodeResult::Type Attack_Implementation(AActor* InAttackTarget) override PURE_VIRTUAL(ADFEnemyCharacter::Attack, return EBTNodeResult::Type::Succeeded;);
 
 protected:
 	virtual void BeginPlay() override;
