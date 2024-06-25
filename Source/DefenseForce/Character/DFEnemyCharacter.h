@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-#include "Interface/DFAIAttackInterface.h"
+#include "Interface/DFCharacterAnimAttackInterface.h"
 #include "DFEnemyCharacter.generated.h"
 
 UCLASS(Abstract)
-class DEFENSEFORCE_API ADFEnemyCharacter : public ACharacter, public IAbilitySystemInterface, public IDFAIAttackInterface
+class DEFENSEFORCE_API ADFEnemyCharacter : public ACharacter, public IAbilitySystemInterface, public IDFCharacterAnimAttackInterface
 {
 	GENERATED_BODY()
 
@@ -17,8 +17,6 @@ public:
 	ADFEnemyCharacter();
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	virtual EBTNodeResult::Type Attack_Implementation(AActor* InAttackTarget) override PURE_VIRTUAL(ADFEnemyCharacter::Attack, return EBTNodeResult::Type::Succeeded;);
 
 protected:
 	virtual void BeginPlay() override;
@@ -62,4 +60,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UDFCharacterAttributeSet> CharacterAttributeSet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	TArray<TSubclassOf<class UGameplayAbility>> InnateAbilities;
 };
