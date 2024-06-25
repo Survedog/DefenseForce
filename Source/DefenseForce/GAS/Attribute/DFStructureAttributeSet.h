@@ -28,6 +28,7 @@ public:
 
 	ATTRIBUTE_ACCESSORS(UDFStructureAttributeSet, Hp);
 	ATTRIBUTE_ACCESSORS(UDFStructureAttributeSet, MaxHp);
+	ATTRIBUTE_ACCESSORS(UDFStructureAttributeSet, DamageToApply);
 
 	UPROPERTY(BlueprintAssignable, Meta = (HideInDetailsView))
 	mutable FOnDestructedDelegate OnDestructed;
@@ -46,6 +47,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHp, Category = "Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHp;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Health", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData DamageToApply;
 
 protected:
 	uint8 bIsDestructed : 1;

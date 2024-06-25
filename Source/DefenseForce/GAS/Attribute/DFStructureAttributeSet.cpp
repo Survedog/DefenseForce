@@ -4,7 +4,7 @@
 #include "GAS/Attribute/DFStructureAttributeSet.h"
 #include "Net/UnrealNetwork.h"
 
-UDFStructureAttributeSet::UDFStructureAttributeSet() : MaxHp(100.0f)
+UDFStructureAttributeSet::UDFStructureAttributeSet() : MaxHp(100.0f), DamageToApply(0.0f)
 {
 	InitHp(MaxHp.GetBaseValue());
 }
