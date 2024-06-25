@@ -36,6 +36,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> InAbilityClass);
 
+//Attributes
+public:
+	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
+	FORCEINLINE float GetHp() const;
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
+	FORCEINLINE void SetHp(float NewHp);
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
+	FORCEINLINE float GetMaxHp() const;
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
+	FORCEINLINE void SetMaxHp(float NewMaxHp);
+
 protected:
 	virtual void BeginPlay() override;
 

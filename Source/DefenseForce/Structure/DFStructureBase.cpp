@@ -79,6 +79,26 @@ void ADFStructureBase::CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> 
 	}
 }
 
+float ADFStructureBase::GetHp() const
+{
+	return StructureAttributeSet->GetHp();
+}
+
+void ADFStructureBase::SetHp(float NewHp)
+{
+	StructureAttributeSet->SetHp(NewHp);
+}
+
+float ADFStructureBase::GetMaxHp() const
+{
+	return StructureAttributeSet->GetMaxHp();
+}
+
+void ADFStructureBase::SetMaxHp(float NewMaxHp)
+{
+	StructureAttributeSet->SetMaxHp(NewMaxHp);
+}
+
 void ADFStructureBase::BeginPlay()
 {
 	Super::BeginPlay();
