@@ -4,6 +4,7 @@
 #include "Structure/DFStructureBase.h"
 #include "Player/DFPlayerController.h"
 #include "AbilitySystemComponent.h"
+#include "GAS/Attribute/DFStructureAttributeSet.h"
 #include "DFLog.h"
 
 ADFStructureBase::ADFStructureBase()
@@ -17,6 +18,8 @@ ADFStructureBase::ADFStructureBase()
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	ASC->SetIsReplicated(true);
 	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;	
+
+	StructureAttributeSet = CreateDefaultSubobject<UDFStructureAttributeSet>(TEXT("StructureAttributeSet"));
 
 	BuildCost = 0.0f;
 }
