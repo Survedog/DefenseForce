@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbilityTypes.h"
 #include "GAS/DFGameplayTags.h"
+#include "AIController.h"
 #include "DFLog.h"
 
 UBTTask_Attack::UBTTask_Attack()
@@ -18,7 +19,8 @@ UBTTask_Attack::UBTTask_Attack()
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	// Do not call super function.
-	IAbilitySystemInterface* GASInterface = Cast<IAbilitySystemInterface>(OwnerComp.GetOwner());
+	AAIController* AIController = CastChecked<AAIController>(OwnerComp.GetOwner());
+	IAbilitySystemInterface* GASInterface = Cast<IAbilitySystemInterface>(AIController->GetPawn());
 	if (!GASInterface)
 	{
 		return EBTNodeResult::Failed;
