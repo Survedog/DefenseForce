@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/DFAttackerInfoInterface.h"
 #include "DFProjectileBase.generated.h"
 
 UCLASS()
-class DEFENSEFORCE_API ADFProjectileBase : public AActor
+class DEFENSEFORCE_API ADFProjectileBase : public AActor, public IDFAttackerInfoInterface
 {
 	GENERATED_BODY()
 	
@@ -16,6 +17,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	float GetDamageAmount() const;
+
+	virtual class AActor* GetAttackerActor() const override;
+
+	virtual class UAbilitySystemComponent* GetAttackerActorASC() const override;
 
 protected:
 	virtual void BeginPlay() override;

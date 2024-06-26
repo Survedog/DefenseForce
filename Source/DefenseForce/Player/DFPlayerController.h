@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Interface/PlayerTowerControlInterface.h"
 #include "Interface/PlayerBuildModeInterface.h"
+#include "Interface/DFAttackerInfoInterface.h"
 #include "DFPlayerController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlStartDelegate, ADFTowerBase*, NewControlledTower);
@@ -15,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlEndDelegate, ADFTower
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API ADFPlayerController : public APlayerController, public IPlayerTowerControlInterface, public IPlayerBuildModeInterface
+class DEFENSEFORCE_API ADFPlayerController : public APlayerController, public IPlayerTowerControlInterface, public IPlayerBuildModeInterface, public IDFAttackerInfoInterface
 {
 	GENERATED_BODY()
 	
@@ -29,6 +30,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnEndCursorOverStructureCallback(AActor* TouchedActor);
+
+	virtual class AActor* GetAttackerActor() const override;
+
+	virtual class UAbilitySystemComponent* GetAttackerActorASC() const override;
 
 protected:
 	virtual void BeginPlay() override;

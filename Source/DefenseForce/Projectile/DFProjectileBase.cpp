@@ -3,11 +3,27 @@
 
 #include "Projectile/DFProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "AbilitySystemInterface.h"
 
 ADFProjectileBase::ADFProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+}
+
+AActor* ADFProjectileBase::GetAttackerActor() const
+{
+	return GetInstigator();
+}
+
+UAbilitySystemComponent* ADFProjectileBase::GetAttackerActorASC() const
+{
+	IAbilitySystemInterface* InstigatorGASInterface = Cast<IAbilitySystemInterface>(GetInstigator());
+	if (InstigatorGASInterface)
+	{
+		return InstigatorGASInterface->GetAbilitySystemComponent();
+	}
+	return nullptr;
 }
 
 void ADFProjectileBase::BeginPlay()

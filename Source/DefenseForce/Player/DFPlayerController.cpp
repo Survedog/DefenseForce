@@ -116,6 +116,24 @@ void ADFPlayerController::OnEndCursorOverStructureCallback_Implementation(AActor
 	}
 }
 
+AActor* ADFPlayerController::GetAttackerActor() const
+{
+	return CurrentControlledTower;
+}
+
+UAbilitySystemComponent* ADFPlayerController::GetAttackerActorASC() const
+{
+	if (CurrentControlledTower)
+	{
+		IAbilitySystemInterface* TowerGASInterface = Cast<IAbilitySystemInterface>(CurrentControlledTower);
+		if (TowerGASInterface)
+		{
+			return TowerGASInterface->GetAbilitySystemComponent();
+		}
+	}
+	return nullptr;
+}
+
 void ADFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
