@@ -2,11 +2,23 @@
 
 
 #include "GAS/Attribute/DFHealthAttributeSet.h"
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
 UDFHealthAttributeSet::UDFHealthAttributeSet() : MaxHp(100.0f), DamageToApply(0.0f)
 {
 	InitHp(MaxHp.GetBaseValue());
+}
+
+void UDFHealthAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	// Don't call original super function.
+	if (Data.EvaluatedData.Attribute == GetDamageToApplyAttribute())
+	{
+		const float NewHp = FMath::Clamp(GetHp() - GetDamageToApply(), 0.0f, GetMaxHp());
+		SetHp(NewHp);
+		SetDamageToApply(0.0f);
+	}
 }
 
 void UDFHealthAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
