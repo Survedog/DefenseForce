@@ -24,13 +24,13 @@ ADFStructureBase::ADFStructureBase()
 
 	HealthAttributeSet = CreateDefaultSubobject<UDFHealthAttributeSet>(TEXT("HealthAttributeSet"));
 
-	BuildCost = 0.0f;
-
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> DamageEffectClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/GE/BPGE_AttackDamage.BPGE_AttackDamage_C"));
 	if (DamageEffectClassRef.Class)
 	{
 		DamageEffectClass = DamageEffectClassRef.Class;
 	}
+
+	BuildCost = 0.0f;
 }
 
 float ADFStructureBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

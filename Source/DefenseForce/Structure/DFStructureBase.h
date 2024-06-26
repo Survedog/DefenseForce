@@ -74,9 +74,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
 	TMap<EDFAbilityInputID, TSubclassOf<class UGameplayAbility>> InputAbilityMap;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Build")
-	float BuildCost;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
 	TSubclassOf<class UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Build")
+	float BuildCost;	
 };
