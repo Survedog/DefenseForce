@@ -17,6 +17,7 @@ public:
 	ADFEnemyCharacter();
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void AttackHitCheck_Implementation() override;
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -25,6 +26,12 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDead();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class AActor* GetAttackTargetActor() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	FORCEINLINE float GetDamageAmount() const;
 
 // General
 public:

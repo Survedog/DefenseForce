@@ -7,6 +7,9 @@
 #include "GAS/Attribute/DFHealthAttributeSet.h"
 #include "Interface/DFAttackerInfoInterface.h"
 #include "GAS/DFGameplayTags.h"
+#include "AI/DFAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Engine/DamageEvents.h"
 #include "DFLog.h"
 
 ADFEnemyCharacter::ADFEnemyCharacter()
@@ -55,6 +58,16 @@ float ADFEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	}
 
 	return 0.0f;
+}
+
+void ADFEnemyCharacter::AttackHitCheck_Implementation()
+{
+	AActor* TargetActor = GetAttackTargetActor();
+	if (TargetActor)
+	{
+		const float DamageAmount = GetDamageAmount();
+		TargetActor->TakeDamage(DamageAmount, FDamageEvent(), GetController(), this);
+	}
 }
 
 UAbilitySystemComponent* ADFEnemyCharacter::GetAbilitySystemComponent() const
@@ -112,6 +125,21 @@ void ADFEnemyCharacter::BeginPlay()
 			ASC->GiveAbility(AbilitySpec);
 		}
 	}
+}
+
+AActor* ADFEnemyCharacter::GetAttackTargetActor() const
+{
+	ADFAIController* DFAIController = CastChecked<ADFAIController>(GetController());
+	UBlackboardComponent* BBComp = DFAIController->GetBlackboardComponent();
+	if (BBComp)
+	{
+		UObject* BBKeyObject = BBComp->GetValueAsObject(TEXT("TargetActor"));
+		if (BBKeyObject)
+		{
+			return Cast<AActor>(BBKeyObject);
+		}
+	}
+	return nullptr;
 }
 
 void ADFEnemyCharacter::OnDead_Implementation()
