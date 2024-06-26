@@ -15,6 +15,8 @@ class DEFENSEFORCE_API ADFStructureBase : public AActor, public IAbilitySystemIn
 	
 public:
 	ADFStructureBase();
+	
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override { return ASC; }
 
@@ -61,7 +63,7 @@ protected:
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
-	TObjectPtr<class UDFStructureAttributeSet> StructureAttributeSet;
+	TObjectPtr<class UDFHealthAttributeSet> HealthAttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
 	TArray<TSubclassOf<class UGameplayAbility>> NonInputAbilities;

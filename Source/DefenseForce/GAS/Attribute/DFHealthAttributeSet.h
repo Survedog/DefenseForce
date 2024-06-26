@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
-#include "DFStructureAttributeSet.generated.h"
+#include "DFHealthAttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -19,16 +19,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDestructedDelegate);
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API UDFStructureAttributeSet : public UAttributeSet
+class DEFENSEFORCE_API UDFHealthAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 	
 public:
-	UDFStructureAttributeSet();
+	UDFHealthAttributeSet();
 
-	ATTRIBUTE_ACCESSORS(UDFStructureAttributeSet, Hp);
-	ATTRIBUTE_ACCESSORS(UDFStructureAttributeSet, MaxHp);
-	ATTRIBUTE_ACCESSORS(UDFStructureAttributeSet, DamageToApply);
+	ATTRIBUTE_ACCESSORS(UDFHealthAttributeSet, Hp);
+	ATTRIBUTE_ACCESSORS(UDFHealthAttributeSet, MaxHp);
+	ATTRIBUTE_ACCESSORS(UDFHealthAttributeSet, DamageToApply);
 
 	UPROPERTY(BlueprintAssignable, Meta = (HideInDetailsView))
 	mutable FOnDestructedDelegate OnDestructed;

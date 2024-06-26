@@ -4,7 +4,7 @@
 #include "Structure/DFStructureBase.h"
 #include "Player/DFPlayerController.h"
 #include "AbilitySystemComponent.h"
-#include "GAS/Attribute/DFStructureAttributeSet.h"
+#include "GAS/Attribute/DFHealthAttributeSet.h"
 #include "DFLog.h"
 
 ADFStructureBase::ADFStructureBase()
@@ -19,9 +19,16 @@ ADFStructureBase::ADFStructureBase()
 	ASC->SetIsReplicated(true);
 	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;	
 
-	StructureAttributeSet = CreateDefaultSubobject<UDFStructureAttributeSet>(TEXT("StructureAttributeSet"));
+	HealthAttributeSet = CreateDefaultSubobject<UDFHealthAttributeSet>(TEXT("HealthAttributeSet"));
 
 	BuildCost = 0.0f;
+}
+
+float ADFStructureBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	return DamageAmount;
 }
 
 void ADFStructureBase::AbilityInputPressed(EDFAbilityInputID InputID)
@@ -81,22 +88,22 @@ void ADFStructureBase::CancelAbilityOfClass(TSubclassOf<class UGameplayAbility> 
 
 float ADFStructureBase::GetHp() const
 {
-	return StructureAttributeSet->GetHp();
+	return HealthAttributeSet->GetHp();
 }
 
 void ADFStructureBase::SetHp(float NewHp)
 {
-	StructureAttributeSet->SetHp(NewHp);
+	HealthAttributeSet->SetHp(NewHp);
 }
 
 float ADFStructureBase::GetMaxHp() const
 {
-	return StructureAttributeSet->GetMaxHp();
+	return HealthAttributeSet->GetMaxHp();
 }
 
 void ADFStructureBase::SetMaxHp(float NewMaxHp)
 {
-	StructureAttributeSet->SetMaxHp(NewMaxHp);
+	HealthAttributeSet->SetMaxHp(NewMaxHp);
 }
 
 void ADFStructureBase::BeginPlay()
