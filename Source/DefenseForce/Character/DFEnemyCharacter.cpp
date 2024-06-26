@@ -5,6 +5,8 @@
 #include "AbilitySystemComponent.h"
 #include "GAS/Attribute/DFCharacterAttributeSet.h"
 #include "GAS/Attribute/DFHealthAttributeSet.h"
+#include "Interface/DFAttackerInfoInterface.h"
+#include "GAS/DFGameplayTags.h"
 #include "DFLog.h"
 
 ADFEnemyCharacter::ADFEnemyCharacter()
@@ -22,6 +24,37 @@ ADFEnemyCharacter::ADFEnemyCharacter()
 	{
 		AIControllerClass = AIControllerClassRef.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<UGameplayEffect> DamageEffectClassRef(TEXT("/Game/DefenseForce/Blueprint/GAS/GE/BPGE_AttackDamage.BPGE_AttackDamage_C"));
+	if (DamageEffectClassRef.Class)
+	{
+		DamageEffectClass = DamageEffectClassRef.Class;
+	}
+}
+
+float ADFEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	IDFAttackerInfoInterface* AttackerInfoInterface = Cast<IDFAttackerInfoInterface>(EventInstigator);
+	if (AttackerInfoInterface)
+	{
+		UAbilitySystemComponent* AttackerASC = AttackerInfoInterface->GetAttackerActorASC();
+		if (AttackerASC)
+		{
+			FGameplayEffectContextHandle EffectContextHandle = AttackerASC->MakeEffectContext();
+			EffectContextHandle.AddInstigator(AttackerASC->GetOwnerActor(), DamageCauser);
+
+			FGameplayEffectSpecHandle EffectSpecHandle = AttackerASC->MakeOutgoingSpec(DamageEffectClass, 1.0f, EffectContextHandle);
+			if (EffectSpecHandle.IsValid())
+			{
+				EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GASTAG_Attribute_Health_DamageToApply, DamageAmount);
+				AttackerASC->BP_ApplyGameplayEffectSpecToTarget(EffectSpecHandle, ASC);
+			}
+		}
+	}
+
+	return 0.0f;
 }
 
 UAbilitySystemComponent* ADFEnemyCharacter::GetAbilitySystemComponent() const

@@ -16,6 +16,8 @@ class DEFENSEFORCE_API ADFEnemyCharacter : public ACharacter, public IAbilitySys
 public:
 	ADFEnemyCharacter();
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
@@ -61,4 +63,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
 	TArray<TSubclassOf<class UGameplayAbility>> InnateAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	TSubclassOf<class UGameplayEffect> DamageEffectClass;
 };
