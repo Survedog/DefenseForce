@@ -26,7 +26,7 @@ void UDFHealthAttributeSet::PostAttributeChange(const FGameplayAttribute& Attrib
 		if (GetOwningActor()->HasAuthority() && FMath::IsNearlyZero(NewValue) && !bIsDestructed)
 		{
 			bIsDestructed = true;
-			OnDestructed.Broadcast();
+			OnHpZero.Broadcast();
 		}
 	}
 }

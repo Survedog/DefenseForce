@@ -13,7 +13,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDestructedDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpZeroDelegate);
 
 /**
  * 
@@ -31,7 +31,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UDFHealthAttributeSet, DamageToApply);
 
 	UPROPERTY(BlueprintAssignable, Meta = (HideInDetailsView))
-	mutable FOnDestructedDelegate OnDestructed;
+	mutable FOnHpZeroDelegate OnHpZero;
 
 protected:
 	//virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
