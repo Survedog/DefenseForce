@@ -71,7 +71,7 @@ void ADFEnemyCharacter::BeginPlay()
 
 	if (HasAuthority())
 	{
-		CharacterAttributeSet->OnHpZero.AddDynamic(this, &ADFEnemyCharacter::OnDead);
+		HealthAttributeSet->OnHpZero.AddDynamic(this, &ADFEnemyCharacter::OnDead);
 
 		for (auto Ability : InnateAbilities)
 		{
