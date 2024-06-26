@@ -49,17 +49,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
 	FORCEINLINE void SetMoveSpeed(float NewMoveSpeed);
 
-	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
-	FORCEINLINE float GetDamageToApply() const;
-	UFUNCTION(BlueprintCallable, Category = "GAS|Attribute")
-	FORCEINLINE void SetDamageToApply(float NewDamageToApply);
-
 protected:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	TObjectPtr<class UDFCharacterAttributeSet> CharacterAttributeSet;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
+	TObjectPtr<class UDFHealthAttributeSet> HealthAttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
 	TArray<TSubclassOf<class UGameplayAbility>> InnateAbilities;

@@ -4,6 +4,7 @@
 #include "Character/DFEnemyCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "GAS/Attribute/DFCharacterAttributeSet.h"
+#include "GAS/Attribute/DFHealthAttributeSet.h"
 #include "DFLog.h"
 
 ADFEnemyCharacter::ADFEnemyCharacter()
@@ -14,6 +15,7 @@ ADFEnemyCharacter::ADFEnemyCharacter()
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	CharacterAttributeSet = CreateDefaultSubobject<UDFCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
+	HealthAttributeSet = CreateDefaultSubobject<UDFHealthAttributeSet>(TEXT("HealthAttributeSet"));
 
 	static ConstructorHelpers::FClassFinder<AController> AIControllerClassRef(TEXT("/Game/DefenseForce/Blueprint/Character/Enemy/BP_DFAIController.BP_DFAIController_C"));
 	if (AIControllerClassRef.Class)
@@ -30,22 +32,22 @@ UAbilitySystemComponent* ADFEnemyCharacter::GetAbilitySystemComponent() const
 #pragma region AttributeGetterSetters
 float ADFEnemyCharacter::GetHp() const
 {
-	return CharacterAttributeSet->GetHp();
+	return HealthAttributeSet->GetHp();
 }
 
 void ADFEnemyCharacter::SetHp(float NewHp)
 {
-	CharacterAttributeSet->SetHp(NewHp);
+	HealthAttributeSet->SetHp(NewHp);
 }
 
 float ADFEnemyCharacter::GetMaxHp() const
 {
-	return CharacterAttributeSet->GetMaxHp();
+	return HealthAttributeSet->GetMaxHp();
 }
 
 void ADFEnemyCharacter::SetMaxHp(float NewMaxHp)
 {
-	CharacterAttributeSet->SetMaxHp(NewMaxHp);
+	HealthAttributeSet->SetMaxHp(NewMaxHp);
 }
 
 float ADFEnemyCharacter::GetMoveSpeed() const
@@ -58,15 +60,6 @@ void ADFEnemyCharacter::SetMoveSpeed(float NewMoveSpeed)
 	CharacterAttributeSet->SetMoveSpeed(NewMoveSpeed);
 }
 
-float ADFEnemyCharacter::GetDamageToApply() const
-{
-	return CharacterAttributeSet->GetDamageToApply();
-}
-
-void ADFEnemyCharacter::SetDamageToApply(float NewDamageToApply)
-{
-	CharacterAttributeSet->SetDamageToApply(NewDamageToApply);
-}
 #pragma endregion
 
 void ADFEnemyCharacter::BeginPlay()
