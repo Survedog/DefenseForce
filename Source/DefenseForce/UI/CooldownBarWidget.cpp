@@ -30,18 +30,14 @@ void UCooldownBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		{
 			ActiveCooldownEffect = ASC->GetActiveGameplayEffect(EffectHandleArray[0]);
 		}
+		const float CooldownDuration = ActiveCooldownEffect->GetDuration();
+		UpdateGaugeMaxValue(CooldownDuration);
 	}
 
 	if (ActiveCooldownEffect)
 	{
-		const float CooldownDuration = ActiveCooldownEffect->GetDuration();
-		const float CooldownElaspedTime = CooldownDuration - ActiveCooldownEffect->GetTimeRemaining(GetWorld()->GetTimeSeconds());
-
-		if (CooldownDuration > 0.0f)
-		{
-			const float CooldownElapsedPercent = FMath::Clamp(CooldownElaspedTime / CooldownDuration, 0.0f, 1.0f);
-			PbCooldownBar->SetPercent(CooldownElapsedPercent);
-		}
+		const float CooldownElaspedTime = ActiveCooldownEffect->GetDuration() - ActiveCooldownEffect->GetTimeRemaining(GetWorld()->GetTimeSeconds());
+		UpdateGaugeCurrentValue(CooldownElaspedTime);
 	}
 }
 
@@ -51,7 +47,7 @@ void UCooldownBarWidget::OnCooldownTagChanged(const FGameplayTag Tag, int32 TagC
 	ActiveCooldownEffect = nullptr;
 	if (TagCount > 0)
 	{
-		PbCooldownBar->SetPercent(0.0f);
+		UpdateGauge(GetGaugeCurrentValue(), GetGaugeMaxValue());
 		SetVisibility(ESlateVisibility::HitTestInvisible);		
 	}
 	else

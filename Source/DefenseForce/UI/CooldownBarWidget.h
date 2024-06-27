@@ -6,14 +6,15 @@
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
 #include "Interface/DFGASUserWidgetInterface.h"
-#include "AbilitySYstemInterface.h"
+#include "AbilitySystemInterface.h"
+#include "DFGaugeWidgetBase.h"
 #include "CooldownBarWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API UCooldownBarWidget : public UUserWidget, public IDFGASUserWidgetInterface, public IAbilitySystemInterface
+class DEFENSEFORCE_API UCooldownBarWidget : public UDFGaugeWidgetBase, public IDFGASUserWidgetInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -29,9 +30,6 @@ protected:
 	void OnCooldownTagChanged(const FGameplayTag Tag, int32 TagCount);
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UProgressBar> PbCooldownBar;
-
 	const struct FActiveGameplayEffect* ActiveCooldownEffect;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ASC")
