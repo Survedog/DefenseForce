@@ -2,16 +2,16 @@
 
 
 #include "UI/GASWidgetComponent.h"
-#include "UI/GASUserWidget.h"
+#include "Interface/DFGASUserWidgetInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
 void UGASWidgetComponent::InitWidget()
 {
 	Super::InitWidget();
 
-	UGASUserWidget* GASWidget = Cast<UGASUserWidget>(GetWidget());
-	if (GASWidget)
+	IDFGASUserWidgetInterface* GASWidgetInterface = Cast<IDFGASUserWidgetInterface>(GetWidget());
+	if (GASWidgetInterface)
 	{
-		GASWidget->SetAbilitySystemComponent(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()));
+		GASWidgetInterface->SetAbilitySystemComponent(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()));
 	}
 }

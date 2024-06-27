@@ -3,21 +3,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/GASUserWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "Interface/DFGASUserWidgetInterface.h"
+#include "AbilitySYstemInterface.h"
 #include "CooldownBarWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEFENSEFORCE_API UCooldownBarWidget : public UGASUserWidget
+class DEFENSEFORCE_API UCooldownBarWidget : public UUserWidget, public IDFGASUserWidgetInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
+
+public:
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	virtual void SetAbilitySystemComponent(class UAbilitySystemComponent* NewASC) override;
 
 	void OnCooldownTagChanged(const FGameplayTag Tag, int32 TagCount);
 
@@ -26,4 +33,7 @@ protected:
 	TObjectPtr<class UProgressBar> PbCooldownBar;
 
 	const struct FActiveGameplayEffect* ActiveCooldownEffect;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ASC")
+	TWeakObjectPtr<class UAbilitySystemComponent> ASC;
 };

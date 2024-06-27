@@ -59,3 +59,13 @@ void UCooldownBarWidget::OnCooldownTagChanged(const FGameplayTag Tag, int32 TagC
 		SetVisibility(ESlateVisibility::Hidden);
 	}
 }
+
+void UCooldownBarWidget::SetAbilitySystemComponent(UAbilitySystemComponent* NewASC)
+{
+	ASC = NewASC;
+}
+
+UAbilitySystemComponent* UCooldownBarWidget::GetAbilitySystemComponent() const
+{
+	return ASC.Get();
+}
