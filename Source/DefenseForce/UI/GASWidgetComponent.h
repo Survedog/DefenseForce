@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class DEFENSEFORCE_API UGASWidgetComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
