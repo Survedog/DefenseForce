@@ -3,3 +3,9 @@
 
 #include "UI/DFGaugeWidgetBase.h"
 
+UDFGaugeWidgetBase::UDFGaugeWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	GaugeCurrentValue = 0.0f;
+	GaugeMaxValue = 1.0f;
+}

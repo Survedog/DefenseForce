@@ -15,14 +15,18 @@ class DEFENSEFORCE_API UDFGaugeWidgetBase : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void UpdateGaugeCurrentValue(float InCurrentValue) { GaugeCurrentValue = InCurrentValue; UpdateGauge(GaugeCurrentValue, GaugeMaxValue); }
+	UDFGaugeWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void UpdateGaugeMaxValue(float InMaxValue) { GaugeMaxValue = InMaxValue; UpdateGauge(GaugeCurrentValue, GaugeMaxValue); }
+	FORCEINLINE void UpdateGaugeCurrentValue(float InCurrentValue) { GaugeCurrentValue = InCurrentValue; UpdateGaugeUI(GaugeCurrentValue, GaugeMaxValue); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void UpdateGaugeMaxValue(float InMaxValue) { GaugeMaxValue = InMaxValue; UpdateGaugeUI(GaugeCurrentValue, GaugeMaxValue); }
+
+	FORCEINLINE void UpdateGaugeCurrentAndMaxValue(float InCurrentValue, float InMaxValue) { GaugeCurrentValue = InCurrentValue; GaugeMaxValue = InMaxValue; UpdateGaugeUI(GaugeCurrentValue, GaugeMaxValue); }
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateGauge(float InCurrentValue, float InMaxValue);
+	void UpdateGaugeUI(float InCurrentValue, float InMaxValue);
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetGaugeCurrentValue() const { return GaugeCurrentValue; }

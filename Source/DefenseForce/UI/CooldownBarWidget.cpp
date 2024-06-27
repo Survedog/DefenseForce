@@ -47,7 +47,7 @@ void UCooldownBarWidget::OnCooldownTagChanged(const FGameplayTag Tag, int32 TagC
 	ActiveCooldownEffect = nullptr;
 	if (TagCount > 0)
 	{
-		UpdateGauge(GetGaugeCurrentValue(), GetGaugeMaxValue());
+		UpdateGaugeUI(GetGaugeCurrentValue(), GetGaugeMaxValue());
 		SetVisibility(ESlateVisibility::HitTestInvisible);		
 	}
 	else
