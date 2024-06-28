@@ -20,7 +20,7 @@ ADFStructureBase::ADFStructureBase()
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	ASC->SetIsReplicated(true);
-	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;	
+	ASC->ReplicationMode = EGameplayEffectReplicationMode::Full;
 
 	HealthAttributeSet = CreateDefaultSubobject<UDFHealthAttributeSet>(TEXT("HealthAttributeSet"));
 
