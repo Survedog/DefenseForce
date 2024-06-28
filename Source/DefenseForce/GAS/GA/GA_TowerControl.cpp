@@ -57,7 +57,7 @@ void UGA_TowerControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 	TowerASC->CancelAbilities(&AttackTagContainer);
 
 	UAbilitySystemComponent* PlayerASC = GetAbilitySystemComponentFromActorInfo_Checked();
-	if (IsLocallyControlled())
+	if (IsLocallyControlled() && DFTargetActor)
 	{
 		PlayerASC->SpawnedTargetActors.Remove(DFTargetActor);
 		DFTargetActor->SetOwner(nullptr);
