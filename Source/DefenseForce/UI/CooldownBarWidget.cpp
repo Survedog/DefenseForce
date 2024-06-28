@@ -14,6 +14,7 @@ void UCooldownBarWidget::NativeConstruct()
 	DF_NETUILOG(LogDFUI, Log, TEXT("Start"));
 	if (ASC.IsValid())
 	{
+		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &UCooldownBarWidget::OnActiveGameplayEffectAddedCallback);
 		ASC->RegisterGameplayTagEvent(GASTAG_Structure_Action_Attack_Cooldown, EGameplayTagEventType::Type::NewOrRemoved).AddUObject(this, &UCooldownBarWidget::OnCooldownTagChanged);
 	}	
 	SetVisibility(ESlateVisibility::Hidden);
@@ -29,9 +30,12 @@ void UCooldownBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		if (!EffectHandleArray.IsEmpty())
 		{
 			ActiveCooldownEffect = ASC->GetActiveGameplayEffect(EffectHandleArray[0]);
-		}
-		const float CooldownDuration = ActiveCooldownEffect->GetDuration();
-		UpdateGaugeMaxValue(CooldownDuration);
+			if (ActiveCooldownEffect)
+			{
+				const float CooldownDuration = ActiveCooldownEffect->GetDuration();
+				UpdateGaugeMaxValue(CooldownDuration);
+			}
+		}		
 	}
 
 	if (ActiveCooldownEffect)
@@ -41,18 +45,30 @@ void UCooldownBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	}
 }
 
+void UCooldownBarWidget::OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* InASC, const FGameplayEffectSpec& InEffectSpec, FActiveGameplayEffectHandle InActiveEffectHandle)
+{
+	DF_NETUILOG(LogDFUI, Log, TEXT("Start"));
+
+	FGameplayTagContainer EffectAssetTagContainer;
+	InEffectSpec.GetAllAssetTags(EffectAssetTagContainer);
+	if (EffectAssetTagContainer.HasTag(GASTAG_Structure_Action_Attack_Cooldown))
+	{
+		ActiveCooldownEffect = InASC->GetActiveGameplayEffect(InActiveEffectHandle);
+		if (ActiveCooldownEffect)
+		{
+			UpdateGaugeCurrentAndMaxValue(0.0f, ActiveCooldownEffect->GetDuration());
+			SetVisibility(ESlateVisibility::HitTestInvisible);
+		}
+	}
+}
+
 void UCooldownBarWidget::OnCooldownTagChanged(const FGameplayTag Tag, int32 TagCount)
 {
 	DF_NETUILOG(LogDFUI, Log, TEXT("Start. TagCount: %d"), TagCount);
-	ActiveCooldownEffect = nullptr;
-	if (TagCount > 0)
-	{
-		UpdateGaugeUI(GetGaugeCurrentValue(), GetGaugeMaxValue());
-		SetVisibility(ESlateVisibility::HitTestInvisible);		
-	}
-	else
+	if (TagCount <= 0)
 	{
 		SetVisibility(ESlateVisibility::Hidden);
+		ActiveCooldownEffect = nullptr;
 	}
 }
 

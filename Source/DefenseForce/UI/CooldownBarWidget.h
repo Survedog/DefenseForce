@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "ActiveGameplayEffectHandle.h"
 #include "Interface/DFGASUserWidgetInterface.h"
 #include "AbilitySystemInterface.h"
 #include "DFGaugeWidgetBase.h"
@@ -27,6 +28,7 @@ protected:
 
 	virtual void SetAbilitySystemComponent(class UAbilitySystemComponent* NewASC) override;
 
+	void OnActiveGameplayEffectAddedCallback(class UAbilitySystemComponent* InASC, const struct FGameplayEffectSpec& InEffectSpec, FActiveGameplayEffectHandle InActiveEffectHandle);
 	void OnCooldownTagChanged(const FGameplayTag Tag, int32 TagCount);
 
 protected:
