@@ -27,7 +27,7 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDead();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	FORCEINLINE class AActor* GetAttackTargetActor() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)

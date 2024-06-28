@@ -19,6 +19,9 @@ ADFEnemyCharacter::ADFEnemyCharacter()
 	DropMoneyAmount = 100.0f;
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	ASC->SetIsReplicated(true);
+	ASC->ReplicationMode = EGameplayEffectReplicationMode::Mixed;
+
 	CharacterAttributeSet = CreateDefaultSubobject<UDFCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 	HealthAttributeSet = CreateDefaultSubobject<UDFHealthAttributeSet>(TEXT("HealthAttributeSet"));
 
@@ -129,14 +132,17 @@ void ADFEnemyCharacter::BeginPlay()
 
 AActor* ADFEnemyCharacter::GetAttackTargetActor() const
 {
-	ADFAIController* DFAIController = CastChecked<ADFAIController>(GetController());
-	UBlackboardComponent* BBComp = DFAIController->GetBlackboardComponent();
-	if (BBComp)
+	if (HasAuthority())
 	{
-		UObject* BBKeyObject = BBComp->GetValueAsObject(TEXT("TargetActor"));
-		if (BBKeyObject)
+		ADFAIController* DFAIController = CastChecked<ADFAIController>(GetController());
+		UBlackboardComponent* BBComp = DFAIController->GetBlackboardComponent();
+		if (BBComp)
 		{
-			return Cast<AActor>(BBKeyObject);
+			UObject* BBKeyObject = BBComp->GetValueAsObject(TEXT("TargetActor"));
+			if (BBKeyObject)
+			{
+				return Cast<AActor>(BBKeyObject);
+			}
 		}
 	}
 	return nullptr;
