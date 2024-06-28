@@ -20,7 +20,8 @@ void UAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	if (MeshComp->GetOwner()->Implements<UDFCharacterAnimAttackInterface>())
+	AActor* OwnerActor = MeshComp->GetOwner();
+	if (OwnerActor->HasAuthority() && OwnerActor->Implements<UDFCharacterAnimAttackInterface>())
 	{
 		DF_LOG(LogDF, Log, TEXT("Check Attack Hit"));
 		IDFCharacterAnimAttackInterface::Execute_AttackHitCheck(MeshComp->GetOwner());
