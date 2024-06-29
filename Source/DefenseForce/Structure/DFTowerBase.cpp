@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GAS/TA/DFGATA_Trace.h"
 #include "Subsystem/TargetingInstanceSubsystem.h"
+#include "AbilitySystemComponent.h"
 #include "DFLog.h"
 
 ADFTowerBase::ADFTowerBase() : ControllingPlayerPawn(nullptr)
@@ -73,13 +74,6 @@ void ADFTowerBase::InitializeTargetActor_Implementation(AGameplayAbilityTargetAc
 	}
 }
 
-void ADFTowerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ADFTowerBase, ControllingPlayerPawn);
-}
-
 void ADFTowerBase::OnControlStart_Implementation(ADFPlayerPawn* NewPlayerPawn)
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
@@ -87,28 +81,24 @@ void ADFTowerBase::OnControlStart_Implementation(ADFPlayerPawn* NewPlayerPawn)
 	SetOwner(NewPlayerPawn);
 	bIsBeingControlled = true;
 	ControllingPlayerPawn = NewPlayerPawn;
+	ASC->InitAbilityActorInfo(this, this);
+
+	if (HasAuthority())
+	{
+		SetAutonomousProxy(NewPlayerPawn->GetRemoteRole() == ENetRole::ROLE_AutonomousProxy);
+	}
 }
 
-void ADFTowerBase::OnControlEnd_Implementation()
+void ADFTowerBase::OnControlEnd_Implementation(ADFPlayerPawn* LastPlayerPawn)
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	bIsBeingControlled = false;
 	ControllingPlayerPawn = nullptr;
 	SetOwner(nullptr);
-}
+	ASC->InitAbilityActorInfo(this, this);
 
-void ADFTowerBase::OnRep_ControllingPlayerPawn_Implementation()
-{	
-	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	if (ControllingPlayerPawn.IsValid())
+	if (HasAuthority())
 	{
-		OnControlStart(ControllingPlayerPawn.Get());
-	}
-	else
-	{
-		if (bIsBeingControlled)
-		{
-			OnControlEnd();
-		}
+		SetAutonomousProxy(false);
 	}
 }

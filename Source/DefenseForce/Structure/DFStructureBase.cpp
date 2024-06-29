@@ -2,7 +2,8 @@
 
 
 #include "Structure/DFStructureBase.h"
-#include "Player/DFPlayerController.h"
+#include "GameFramework/PlayerController.h"
+#include "Player/DFPlayerPawn.h"
 #include "AbilitySystemComponent.h"
 #include "GAS/Attribute/DFHealthAttributeSet.h"
 #include "Interface/DFAttackerInfoInterface.h"
@@ -136,12 +137,14 @@ void ADFStructureBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DF_NETLOG(LogDF, Log, TEXT("Start"));
-	ADFPlayerController* LocalDFPlayer = Cast<ADFPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
-	if (LocalDFPlayer)
+	DF_NETLOG(LogDF, Log, TEXT("Start"));	
+	if (APlayerController* LocalPlayer = GEngine->GetFirstLocalPlayerController(GetWorld()))
 	{
-		OnBeginCursorOver.AddDynamic(LocalDFPlayer, &ADFPlayerController::OnBeginCursorOverStructureCallback);
-		OnEndCursorOver.AddDynamic(LocalDFPlayer, &ADFPlayerController::OnEndCursorOverStructureCallback);
+		if (ADFPlayerPawn* DFLocalPlayerPawn = Cast<ADFPlayerPawn>(LocalPlayer->GetPawn()))
+		{
+			OnBeginCursorOver.AddDynamic(DFLocalPlayerPawn, &ADFPlayerPawn::OnBeginCursorOverStructureCallback);
+			OnEndCursorOver.AddDynamic(DFLocalPlayerPawn, &ADFPlayerPawn::OnEndCursorOverStructureCallback);
+		}
 	}
 
 	ASC->InitAbilityActorInfo(this, this);

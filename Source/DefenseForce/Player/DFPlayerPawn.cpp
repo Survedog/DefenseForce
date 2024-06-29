@@ -5,15 +5,34 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
 #include "Player/DFPlayerController.h"
+#include "Structure/DFTowerBase.h"
 #include "AbilitySystemComponent.h"
 #include "DefenseForce.h"
 #include "DFLog.h"
 
-ADFPlayerPawn::ADFPlayerPawn() : PlayerAimLocation(FVector::Zero())
+ADFPlayerPawn::ADFPlayerPawn() : PlayerAimLocation(FVector::Zero()), CurrentStructureUnderCursor(nullptr), CurrentControlledTower(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	PlayerAimTraceLength = 100000.0f;
+}
+
+AActor* ADFPlayerPawn::GetAttackerActor() const
+{
+	return CurrentControlledTower;
+}
+
+UAbilitySystemComponent* ADFPlayerPawn::GetAttackerActorASC() const
+{
+	if (CurrentControlledTower)
+	{
+		IAbilitySystemInterface* TowerGASInterface = Cast<IAbilitySystemInterface>(CurrentControlledTower);
+		if (TowerGASInterface)
+		{
+			return TowerGASInterface->GetAbilitySystemComponent();
+		}
+	}
+	return nullptr;
 }
 
 void ADFPlayerPawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -21,6 +40,7 @@ void ADFPlayerPawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(ADFPlayerPawn, PlayerAimLocation, COND_SimulatedOnly);
+	DOREPLIFETIME_CONDITION(ADFPlayerPawn, CurrentControlledTower, COND_None);
 }
 
 void ADFPlayerPawn::PossessedBy(AController* NewController)
@@ -29,9 +49,6 @@ void ADFPlayerPawn::PossessedBy(AController* NewController)
 
 	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
 	DFPlayerController = CastChecked<ADFPlayerController>(NewController);
-	DFPlayerController->OnTowerControlStart.AddDynamic(this, &ADFPlayerPawn::OnTowerControlStartCallback);
-	DFPlayerController->OnTowerControlEnd.AddDynamic(this, &ADFPlayerPawn::OnTowerControlEndCallback);
-
 	IAbilitySystemInterface* PSGASInterface = Cast<IAbilitySystemInterface>(NewController->PlayerState);
 	if (PSGASInterface)
 	{
@@ -66,6 +83,17 @@ void ADFPlayerPawn::OnRep_PlayerState()
 		ASC = PSGASInterface->GetAbilitySystemComponent();
 		ensure(ASC.Get());
 		ASC->InitAbilityActorInfo(GetPlayerState(), this);
+	}
+}
+
+void ADFPlayerPawn::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
+	if (Controller && Controller != DFPlayerController)
+	{
+		DFPlayerController = CastChecked<ADFPlayerController>(Controller);
 	}
 }
 
@@ -124,55 +152,75 @@ int32 ADFPlayerPawn::HandleGameplayEvent(FGameplayTag EventTag, const FGameplayE
 	return ASC->HandleGameplayEvent(EventTag, &Payload);
 }
 
-void ADFPlayerPawn::OnRep_Controller()
-{
-	Super::OnRep_Controller();
-
-	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	if (Controller && Controller != DFPlayerController)
-	{
-		DFPlayerController = CastChecked<ADFPlayerController>(Controller);
-		DFPlayerController->OnTowerControlStart.AddUniqueDynamic(this, &ADFPlayerPawn::OnTowerControlStartCallback);
-		DFPlayerController->OnTowerControlEnd.AddUniqueDynamic(this, &ADFPlayerPawn::OnTowerControlEndCallback);
-	}
-}
-
 void ADFPlayerPawn::StartTowerControl(ADFTowerBase* NewTower)
 {
-	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
-	if (TowerControlInterface)
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	if (!NewTower->IsBeingControlled())
 	{
-		TowerControlInterface->StartTowerControl(NewTower);
+		if (NewTower != CurrentControlledTower)
+		{
+			if (CurrentControlledTower)
+			{
+				EndTowerControl();
+			}
+			CurrentControlledTower = NewTower;
+			OnTowerControlStartCallback(NewTower);
+		}
 	}
 }
 
 void ADFPlayerPawn::EndTowerControl()
 {
-	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
-	if (TowerControlInterface)
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	if (CurrentControlledTower && CurrentControlledTower->IsBeingControlled())
 	{
-		TowerControlInterface->EndTowerControl();
+		OnTowerControlEndCallback(CurrentControlledTower);
+		CurrentControlledTower = nullptr;
 	}
 }
 
-ADFTowerBase* ADFPlayerPawn::GetCurrentControlledTower() const
+void ADFPlayerPawn::OnTowerControlStartCallback_Implementation(ADFTowerBase* NewControlledTower)
 {
-	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
-	if (TowerControlInterface)
-	{
-		return TowerControlInterface->GetCurrentControlledTower();
-	}
-	return nullptr;
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	CurrentControlledTower->SetOwner(this);
+	CurrentControlledTower->OnControlStart(this);
+	OnTowerControlStart.Broadcast(CurrentControlledTower);
 }
 
-ADFStructureBase* ADFPlayerPawn::GetCurrentStructureUnderCursor() const
+void ADFPlayerPawn::OnTowerControlEndCallback_Implementation(ADFTowerBase* LastControlledTower)
 {
-	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetController());
-	if (TowerControlInterface)
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	LastControlledTower->OnControlEnd(this);
+	LastControlledTower->SetOwner(nullptr);
+	OnTowerControlEnd.Broadcast(LastControlledTower);
+}
+
+void ADFPlayerPawn::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)
+{
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	CurrentStructureUnderCursor = Cast<ADFStructureBase>(TouchedActor);
+}
+
+void ADFPlayerPawn::OnEndCursorOverStructureCallback_Implementation(AActor* TouchedActor)
+{
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	if (CurrentStructureUnderCursor == TouchedActor)
 	{
-		return TowerControlInterface->GetCurrentStructureUnderCursor();
+		CurrentStructureUnderCursor = nullptr;
 	}
-	return nullptr;
+}
+
+void ADFPlayerPawn::OnRep_CurrentControlledTower(ADFTowerBase* LastControlledTower)
+{
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
+	if (CurrentControlledTower)
+	{
+		OnTowerControlStartCallback(CurrentControlledTower);
+	}
+	else
+	{
+		OnTowerControlEndCallback(LastControlledTower);
+	}
 }
 
 UAbilitySystemComponent* ADFPlayerPawn::GetAbilitySystemComponent() const

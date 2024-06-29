@@ -27,7 +27,7 @@ public:
 	void OnControlStart(class ADFPlayerPawn* NewPlayerPawn);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnControlEnd();	
+	void OnControlEnd(class ADFPlayerPawn* LastPlayerPawn);
 
 	UFUNCTION(BlueprintCallable)
 	class AGameplayAbilityTargetActor* GetAttackTargetActor();
@@ -40,16 +40,10 @@ public:
 	FORCEINLINE bool ShouldConfirmTargetOnInputPressed() const { return bConfirmTargetOnInputPressed; }
 
 protected:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRep_ControllingPlayerPawn();
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<class UGASWidgetComponent> CooldownWidgetComponent;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_ControllingPlayerPawn, Category = "Player Control")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Player Control")
 	TWeakObjectPtr<class ADFPlayerPawn> ControllingPlayerPawn;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")

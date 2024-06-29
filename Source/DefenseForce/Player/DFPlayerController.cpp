@@ -10,38 +10,92 @@
 #include "GAS/DFGameplayTags.h"
 #include "DFLog.h"
 
-ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr), CurrentStructureUnderCursor(nullptr), CurrentControlledTower(nullptr)
+ADFPlayerController::ADFPlayerController() : DFPlayerPawn(nullptr)
 {
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
 }
 
+AActor* ADFPlayerController::GetAttackerActor() const
+{
+	return GetCurrentControlledTower();
+}
+
+UAbilitySystemComponent* ADFPlayerController::GetAttackerActorASC() const
+{
+	ADFTowerBase* CurrentControlledTower = GetCurrentControlledTower();
+	if (CurrentControlledTower)
+	{
+		IAbilitySystemInterface* TowerGASInterface = Cast<IAbilitySystemInterface>(CurrentControlledTower);
+		if (TowerGASInterface)
+		{
+			return TowerGASInterface->GetAbilitySystemComponent();
+		}
+	}
+	return nullptr;
+}
+
+void ADFPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+}
+
+void ADFPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
+	DFPlayerPawn = CastChecked<ADFPlayerPawn>(aPawn);
+	DFPlayerPawn->OnTowerControlStart.AddUniqueDynamic(this, &ADFPlayerController::OnTowerControlStartCallback);
+	DFPlayerPawn->OnTowerControlEnd.AddUniqueDynamic(this, &ADFPlayerController::OnTowerControlEndCallback);
+}
+
+void ADFPlayerController::AcknowledgePossession(APawn* P)
+{
+	Super::AcknowledgePossession(P);
+
+	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
+	DFPlayerPawn = CastChecked<ADFPlayerPawn>(P);
+}
+
 void ADFPlayerController::StartTowerControl(ADFTowerBase* NewTower)
 {
-	DF_NETLOG(LogDF, Log, TEXT("Start"));
-	if (!NewTower->IsBeingControlled())
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetPawn());
+	if (TowerControlInterface)
 	{
-		if (CurrentControlledTower)
-		{
-			EndTowerControl();
-		}
-		CurrentControlledTower = NewTower;
-		CurrentControlledTower->SetOwner(this);
-		CurrentControlledTower->OnControlStart(DFPlayerPawn);
-		OnTowerControlStart.Broadcast(NewTower);
+		TowerControlInterface->StartTowerControl(NewTower);
 	}
 }
 
 void ADFPlayerController::EndTowerControl()
 {
-	DF_NETLOG(LogDF, Log, TEXT("Start"));
-	if (CurrentControlledTower && CurrentControlledTower->IsBeingControlled())
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetPawn());
+	if (TowerControlInterface)
 	{
-		CurrentControlledTower->OnControlEnd();
-		CurrentControlledTower->SetOwner(nullptr);
-		OnTowerControlEnd.Broadcast(CurrentControlledTower);
-		CurrentControlledTower = nullptr;
+		TowerControlInterface->EndTowerControl();
 	}
+}
+
+ADFTowerBase* ADFPlayerController::GetCurrentControlledTower() const
+{
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetPawn());
+	if (TowerControlInterface)
+	{
+		return TowerControlInterface->GetCurrentControlledTower();
+	}
+	return nullptr;
+}
+
+ADFStructureBase* ADFPlayerController::GetCurrentStructureUnderCursor() const
+{
+	IPlayerTowerControlInterface* TowerControlInterface = Cast<IPlayerTowerControlInterface>(GetPawn());
+	if (TowerControlInterface)
+	{
+		return TowerControlInterface->GetCurrentStructureUnderCursor();
+	}
+	return nullptr;
 }
 
 FVector ADFPlayerController::GetPlayerAimLocation() const
@@ -52,19 +106,6 @@ FVector ADFPlayerController::GetPlayerAimLocation() const
 void ADFPlayerController::SetPlayerAimLocation(const FVector& InPlayerAimLocation)
 {
 	DFPlayerPawn->SetPlayerAimLocation(InPlayerAimLocation);
-}
-
-void ADFPlayerController::OnRep_CurrentControlledTower()
-{
-	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	if (CurrentControlledTower)
-	{
-		OnTowerControlStart.Broadcast(CurrentControlledTower);
-	}
-	else
-	{
-		OnTowerControlEnd.Broadcast(CurrentControlledTower);
-	}
 }
 
 void ADFPlayerController::EnterBuildMode(TSubclassOf<ADFStructureBase> InTargetStructureClass)
@@ -99,67 +140,4 @@ bool ADFPlayerController::CanBuildStructure(TSubclassOf<ADFStructureBase> InTarg
 	const float BuildCost = CastChecked<ADFStructureBase>(InTargetStructureClass->GetDefaultObject())->GetBuildCost();
 	const float CurrentMoneyAmount = CastChecked<ADFGameState>(GetWorld()->GetGameState())->GetCurrentMoneyAmount();
 	return CurrentMoneyAmount >= BuildCost;
-}
-
-void ADFPlayerController::OnBeginCursorOverStructureCallback_Implementation(AActor* TouchedActor)
-{
-	DF_NETLOG(LogDF, Log, TEXT("Start"));
-	CurrentStructureUnderCursor = Cast<ADFStructureBase>(TouchedActor);
-}
-
-void ADFPlayerController::OnEndCursorOverStructureCallback_Implementation(AActor* TouchedActor)
-{
-	DF_NETLOG(LogDF, Log, TEXT("Start"));
-	if (CurrentStructureUnderCursor == TouchedActor)
-	{
-		CurrentStructureUnderCursor = nullptr;
-	}
-}
-
-AActor* ADFPlayerController::GetAttackerActor() const
-{
-	return CurrentControlledTower;
-}
-
-UAbilitySystemComponent* ADFPlayerController::GetAttackerActorASC() const
-{
-	if (CurrentControlledTower)
-	{
-		IAbilitySystemInterface* TowerGASInterface = Cast<IAbilitySystemInterface>(CurrentControlledTower);
-		if (TowerGASInterface)
-		{
-			return TowerGASInterface->GetAbilitySystemComponent();
-		}
-	}
-	return nullptr;
-}
-
-void ADFPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	DF_NETLOG(LogDF, Log, TEXT("Start"));
-}
-
-void ADFPlayerController::OnPossess(APawn* aPawn)
-{
-	Super::OnPossess(aPawn);
-
-	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	DFPlayerPawn = CastChecked<ADFPlayerPawn>(aPawn);
-}
-
-void ADFPlayerController::AcknowledgePossession(APawn* P)
-{
-	Super::AcknowledgePossession(P);
-
-	DF_NETLOG(LogDFNET, Log, TEXT("Start"));
-	DFPlayerPawn = CastChecked<ADFPlayerPawn>(P);
-}
-
-void ADFPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME_CONDITION(ADFPlayerController, CurrentControlledTower, COND_AutonomousOnly);
 }

@@ -9,9 +9,6 @@
 #include "Interface/DFAttackerInfoInterface.h"
 #include "DFPlayerController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlStartDelegate, ADFTowerBase*, NewControlledTower);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerControlEndDelegate, ADFTowerBase*, OldControlledTower);
-
 /**
  * 
  */
@@ -23,14 +20,6 @@ class DEFENSEFORCE_API ADFPlayerController : public APlayerController, public IP
 public:
 	ADFPlayerController();
 
-	FORCEINLINE class ADFStructureBase* GetStructureUnderCursor() { return CurrentStructureUnderCursor.Get(); }
-
-	UFUNCTION(BlueprintNativeEvent)
-	void OnBeginCursorOverStructureCallback(AActor* TouchedActor);
-
-	UFUNCTION(BlueprintNativeEvent)
-	void OnEndCursorOverStructureCallback(AActor* TouchedActor);
-
 	virtual class AActor* GetAttackerActor() const override;
 
 	virtual class UAbilitySystemComponent* GetAttackerActorASC() const override;
@@ -39,7 +28,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void AcknowledgePossession(class APawn* P) override;
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 /* PlayerTowerControlInterface */
 protected:
@@ -49,15 +37,17 @@ protected:
 	/** Only call on server. */
 	virtual void EndTowerControl() override;
 
-	virtual class ADFTowerBase* GetCurrentControlledTower() const override { return CurrentControlledTower.Get(); }
-	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const override { return CurrentStructureUnderCursor.Get(); }
+	virtual class ADFTowerBase* GetCurrentControlledTower() const override;
+	virtual class ADFStructureBase* GetCurrentStructureUnderCursor() const override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTowerControlStartCallback(class ADFTowerBase* NewControlledTower);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTowerControlEndCallback(class ADFTowerBase* OldControlledTower);
 
 	virtual FVector GetPlayerAimLocation() const override;
 	virtual void SetPlayerAimLocation(const FVector& InPlayerAimLocation) override;
-
-protected:
-	UFUNCTION()
-	void OnRep_CurrentControlledTower();
 
 protected:
 	/* PlayerBuildModeInterface */
@@ -72,20 +62,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnExitBuildMode(class ADFStructureBase* InBuiltStructure);
 
-public:
-	UPROPERTY(BlueprintAssignable)
-	FOnTowerControlStartDelegate OnTowerControlStart;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnTowerControlEndDelegate OnTowerControlEnd;
-
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Player")
 	TObjectPtr<class ADFPlayerPawn> DFPlayerPawn;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Control")
-	TWeakObjectPtr<class ADFStructureBase> CurrentStructureUnderCursor;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentControlledTower, Category = "Control")
-	TObjectPtr<class ADFTowerBase> CurrentControlledTower;
 };
