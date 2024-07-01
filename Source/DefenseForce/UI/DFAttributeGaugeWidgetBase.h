@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/DFGaugeWidgetBase.h"
-#include "AbilitySystemInterface.h"
-#include "GameplayEffectTypes.h"
+#include "AbilitySystemInterface.h" 
 #include "AttributeSet.h"
 #include "Interface/DFGASUserWidgetInterface.h"
 
@@ -27,8 +26,8 @@ protected:
 
 	virtual void SetAbilitySystemComponent(class UAbilitySystemComponent* NewASC) override;
 
-	void OnAttributeValueChanged(const FOnAttributeChangeData& ChangeData);
-	void OnAttributeMaxValueChanged(const FOnAttributeChangeData& ChangeData);
+	void OnAttributeValueChanged(const struct FOnAttributeChangeData& ChangeData);
+	void OnAttributeMaxValueChanged(const struct FOnAttributeChangeData& ChangeData);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ASC")
