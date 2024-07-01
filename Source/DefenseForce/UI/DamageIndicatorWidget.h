@@ -21,6 +21,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	void OnOwnerHpChangedCallback(const struct FOnAttributeChangeData& AttributeChangeData);
 	

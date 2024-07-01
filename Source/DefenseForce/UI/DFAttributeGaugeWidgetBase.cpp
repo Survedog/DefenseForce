@@ -32,6 +32,17 @@ void UDFAttributeGaugeWidgetBase::NativeConstruct()
 	}
 }
 
+void UDFAttributeGaugeWidgetBase::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (ASC.IsValid())
+	{
+		ASC->GetGameplayAttributeValueChangeDelegate(TargetAttribute).RemoveAll(this);
+		ASC->GetGameplayAttributeValueChangeDelegate(TargetMaxAttribute).RemoveAll(this);
+	}
+}
+
 void UDFAttributeGaugeWidgetBase::SetAbilitySystemComponent(UAbilitySystemComponent* NewASC)
 {
 	ASC = NewASC;

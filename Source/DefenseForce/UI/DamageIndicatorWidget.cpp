@@ -20,6 +20,16 @@ void UDamageIndicatorWidget::NativeConstruct()
 	}
 }
 
+void UDamageIndicatorWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (ASC.IsValid())
+	{
+		ASC->GetGameplayAttributeValueChangeDelegate(UDFHealthAttributeSet::GetHpAttribute()).RemoveAll(this);
+	}
+}
+
 void UDamageIndicatorWidget::OnOwnerHpChangedCallback(const FOnAttributeChangeData& AttributeChangeData)
 {
 	const float DamageAmount = AttributeChangeData.OldValue - AttributeChangeData.NewValue;

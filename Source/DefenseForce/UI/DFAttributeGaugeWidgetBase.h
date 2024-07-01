@@ -23,6 +23,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	virtual void SetAbilitySystemComponent(class UAbilitySystemComponent* NewASC) override;
 
