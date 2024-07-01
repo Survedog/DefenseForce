@@ -5,6 +5,8 @@
 
 void UDFGaugeWidgetBase::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	GaugeCurrentValue = 0.0f;
 	GaugeMaxValue = 1.0f;
 }
