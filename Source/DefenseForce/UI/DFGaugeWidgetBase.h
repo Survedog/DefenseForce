@@ -15,7 +15,7 @@ class DEFENSEFORCE_API UDFGaugeWidgetBase : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UDFGaugeWidgetBase(const FObjectInitializer& ObjectInitializer);
+	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void UpdateGaugeCurrentValue(float InCurrentValue) { GaugeCurrentValue = InCurrentValue; UpdateGaugeUI(GaugeCurrentValue, GaugeMaxValue); }
