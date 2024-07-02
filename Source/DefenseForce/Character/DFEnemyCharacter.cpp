@@ -161,6 +161,7 @@ void ADFEnemyCharacter::OnDead_Implementation()
 {
 	DF_NETLOG(LogDF, Log, TEXT("Start"));
 	bIsDead = true;
+	ASC->AddLooseGameplayTag(GASTAG_Character_State_Dead);
 }
 
 void ADFEnemyCharacter::OnRep_bIsDead()
