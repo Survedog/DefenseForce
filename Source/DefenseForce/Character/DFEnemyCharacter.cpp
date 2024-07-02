@@ -10,6 +10,7 @@
 #include "AI/DFAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Net/UnrealNetwork.h"
 #include "DFLog.h"
 
 ADFEnemyCharacter::ADFEnemyCharacter()
@@ -17,6 +18,7 @@ ADFEnemyCharacter::ADFEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = false;
 
 	DropMoneyAmount = 100.0f;
+	bIsDead = false;
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	ASC->SetIsReplicated(true);
@@ -130,6 +132,13 @@ void ADFEnemyCharacter::BeginPlay()
 	}
 }
 
+void ADFEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION_NOTIFY(ADFEnemyCharacter, bIsDead, COND_None, REPNOTIFY_OnChanged);
+}
+
 AActor* ADFEnemyCharacter::GetAttackTargetActor() const
 {
 	if (HasAuthority())
@@ -150,5 +159,11 @@ AActor* ADFEnemyCharacter::GetAttackTargetActor() const
 
 void ADFEnemyCharacter::OnDead_Implementation()
 {
-	DF_NETLOG(LogDF, Log, TEXT("Start"));	
+	DF_NETLOG(LogDF, Log, TEXT("Start"));
+	bIsDead = true;
+}
+
+void ADFEnemyCharacter::OnRep_bIsDead()
+{
+	OnDead();
 }

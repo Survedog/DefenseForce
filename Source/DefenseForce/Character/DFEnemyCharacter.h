@@ -24,8 +24,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void OnDead();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	FORCEINLINE class AActor* GetAttackTargetActor() const;
@@ -35,11 +34,26 @@ protected:
 
 // General
 public:
-	float GetDropMoneyAmount() const { return DropMoneyAmount; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetDropMoneyAmount() const { return DropMoneyAmount; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool IsDead() const { return bIsDead; }
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDead();
+
+	UFUNCTION()
+	void OnRep_bIsDead();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Game")
 	float DropMoneyAmount;
+
+private:
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_bIsDead, Category = "Game")
+	uint8 bIsDead : 1;
 
 //Attributes
 public:
