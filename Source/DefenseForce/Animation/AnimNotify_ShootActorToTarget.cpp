@@ -31,7 +31,11 @@ void UAnimNotify_ShootActorToTarget::Notify(USkeletalMeshComponent* MeshComp, UA
 		SpawnParams.Instigator = Cast<APawn>(MeshComp->GetOwner());
 		
 		ADFProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<ADFProjectileBase>(ProjectileClass, SpawnParams);
-		UProjectileMovementComponent* ProjectileMovementComp = SpawnedProjectile->GetComponentByClass<UProjectileMovementComponent>();
-		ProjectileMovementComp->Velocity = ProjectileThrowerInterface->GetProjectileLaunchVelocity();
+		if (SpawnedProjectile)
+		{
+			UProjectileMovementComponent* ProjectileMovementComp = SpawnedProjectile->GetProjectileMovement();
+			check(ProjectileMovementComp);
+			ProjectileMovementComp->Velocity = ProjectileThrowerInterface->GetProjectileLaunchVelocity();
+		}
 	}
 }
