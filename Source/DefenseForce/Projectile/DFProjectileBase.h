@@ -22,6 +22,8 @@ public:
 
 	virtual class UAbilitySystemComponent* GetAttackerActorASC() const override;
 
+	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -29,5 +31,9 @@ protected:
 	FORCEINLINE float ApplyPointDamage(AActor* DamagedActor, float BaseDamage, FVector const& HitFromDirection, FHitResult const& HitInfo, TSubclassOf<UDamageType> DamageTypeClass);
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "IgnoreActors"))
-	FORCEINLINE bool ApplyRadialDamage(const UObject* WorldContextObject, float BaseDamage, const FVector& Origin, float DamageRadius, TSubclassOf<class UDamageType> DamageTypeClass, const TArray<AActor*>& IgnoreActors, bool bDoFullDamage = false, ECollisionChannel DamagePreventionChannel = ECC_Visibility);
+	FORCEINLINE bool ApplyRadialDamage(const UObject* WorldContextObject, float BaseDamage, const FVector& Origin, float DamageRadius, TSubclassOf<class UDamageType> DamageTypeClass, const TArray<AActor*>& IgnoreActors, bool bDoFullDamage = false, ECollisionChannel DamagePreventionChannel = ECC_Visibility);	
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile)
+	TObjectPtr<class UProjectileMovementComponent> ProjectileMovement;
 };

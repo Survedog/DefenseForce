@@ -4,11 +4,13 @@
 #include "Projectile/DFProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemInterface.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 ADFProjectileBase::ADFProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 }
 
 AActor* ADFProjectileBase::GetAttackerActor() const
