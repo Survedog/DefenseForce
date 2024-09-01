@@ -24,26 +24,13 @@ void UCooldownBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (!ActiveCooldownEffect)
-	{
-		const TArray<FActiveGameplayEffectHandle>& EffectHandleArray = ASC->GetActiveEffectsWithAllTags(FGameplayTagContainer(GASTAG_Structure_Action_Attack_Cooldown));
-		if (!EffectHandleArray.IsEmpty())
-		{
-			ActiveCooldownEffect = ASC->GetActiveGameplayEffect(EffectHandleArray[0]);
-			if (ActiveCooldownEffect)
-			{
-				const float CooldownDuration = ActiveCooldownEffect->GetDuration();
-				UpdateGaugeMaxValue(CooldownDuration);
-			}
-		}		
-	}
-
 	if (ActiveCooldownEffect)
-	{
+	{		
 		const float CooldownElaspedTime = ActiveCooldownEffect->GetDuration() - ActiveCooldownEffect->GetTimeRemaining(GetWorld()->GetTimeSeconds());
 		UpdateGaugeCurrentValue(CooldownElaspedTime);
 	}
 }
+
 
 void UCooldownBarWidget::OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* InASC, const FGameplayEffectSpec& InEffectSpec, FActiveGameplayEffectHandle InActiveEffectHandle)
 {
