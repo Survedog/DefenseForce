@@ -31,7 +31,6 @@ void UCooldownBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	}
 }
 
-
 void UCooldownBarWidget::OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* InASC, const FGameplayEffectSpec& InEffectSpec, FActiveGameplayEffectHandle InActiveEffectHandle)
 {
 	DF_NETUILOG(LogDFUI, Log, TEXT("Start"));
